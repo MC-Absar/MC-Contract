@@ -316,25 +316,52 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
     <!-- 8. Liability -->
     <div class="section">
       <div class="section-title">8. Limitation of Liability</div>
-      <p class="clause">The MC is not responsible for delays or program changes caused by other vendors, venue staff, or circumstances outside his control. The MC's total liability under this agreement shall not exceed the total fees paid.</p>
+      <p class="clause">The MC's total liability to the Client under this agreement, regardless of the nature of the claim (contract, tort, negligence, or otherwise), shall not exceed the total fees paid by the Client under this agreement. The MC shall not be liable for any indirect, incidental, special, consequential, or punitive damages of any kind, including but not limited to loss of enjoyment, emotional distress, lost profits, or reputational harm.</p>
+      <div class="sub-heading">The MC is expressly not responsible for:</div>
+      <ul class="clause-list">
+        <li>Delays, interruptions, or changes to the program caused by other vendors (DJ, photographer, caterer, florist, etc.), venue staff, or venue management.</li>
+        <li>Technical failures of sound systems, microphones, speakers, or audio-visual equipment not owned or operated by the MC.</li>
+        <li>Schedule overruns caused by late arrivals of the bridal party, guests, or family members.</li>
+        <li>Changes to the run-of-show made by the Client, family members, or venue staff on the day of the event without prior notice to the MC.</li>
+        <li>Miscommunications arising from instructions given by persons other than the primary contact named in this contract.</li>
+        <li>Any outcomes resulting from incomplete, inaccurate, or late delivery of the run-of-show by the Client.</li>
+        <li>Acts of God, extreme weather, natural disasters, power outages, public health emergencies, government-mandated restrictions, or any other force majeure event beyond the MC's reasonable control.</li>
+        <li>The subjective quality, satisfaction, or enjoyment of the event by any individual guest or family member.</li>
+        <li>Conduct, behavior, or actions of guests, family members, or third parties during the event.</li>
+      </ul>
+      <p class="clause">The Client acknowledges that event hosting involves live, unscripted moments and that minor deviations from the planned program do not constitute a breach of this agreement. The MC commits to professional best-effort performance under the conditions present on the day of the event.</p>
     </div>
 
-    <!-- 9. Governing Law -->
+    <!-- 9. Governing Law & Dispute Resolution -->
     <div class="section">
-      <div class="section-title">9. Governing Law</div>
-      <p class="clause">This agreement shall be governed by the laws of the State of Illinois. Any disputes shall be resolved in Cook or DuPage County, Illinois.</p>
+      <div class="section-title">9. Governing Law &amp; Dispute Resolution</div>
+      <p class="clause">This agreement shall be governed by and construed in accordance with the laws of the State of Illinois, without regard to its conflict of law provisions. Any disputes arising out of or relating to this agreement shall first be submitted to good-faith mediation between both parties before any legal action is pursued. If mediation fails, disputes shall be resolved exclusively in the courts of Cook or DuPage County, Illinois.</p>
+      <p class="clause">The Client agrees that any claim or cause of action arising from this agreement must be filed within one (1) year of the event date, after which any such claim is permanently barred.</p>
     </div>
 
-    <!-- 10. Entire Agreement -->
+    <!-- 10. Force Majeure -->
     <div class="section">
-      <div class="section-title">10. Entire Agreement</div>
+      <div class="section-title">10. Force Majeure</div>
+      <p class="clause">Neither party shall be held liable for failure to perform any obligation under this agreement if such failure results from circumstances beyond that party's reasonable control, including but not limited to: acts of God, extreme weather events, natural disasters, fire, flood, pandemic, epidemic, government-imposed restrictions or shutdowns, civil unrest, power outages, or any other event that makes performance impossible or commercially impractical.</p>
+      <p class="clause">In the event of a force majeure, the MC will make every reasonable effort to fulfill the contracted services or provide an alternative arrangement. If the event is cancelled due to force majeure, the retainer shall be retained by the MC as compensation for reserved time and preparation. Any payments beyond the retainer will be refunded on a pro-rated basis.</p>
+    </div>
+
+    <!-- 11. Indemnification -->
+    <div class="section">
+      <div class="section-title">11. Indemnification</div>
+      <p class="clause">The Client agrees to indemnify, defend, and hold harmless Absar Najam, his agents, and representatives from and against any and all claims, damages, losses, costs, and expenses (including reasonable attorney's fees) arising out of or relating to: (a) the Client's breach of any provision of this agreement; (b) the acts or omissions of the Client, their guests, or family members during the event; (c) any claim by a third party related to the event that is not directly caused by the MC's own gross negligence or willful misconduct.</p>
+    </div>
+
+    <!-- 12. Entire Agreement -->
+    <div class="section">
+      <div class="section-title">12. Entire Agreement</div>
       <p class="clause">This document, along with any signed addenda, constitutes the entire agreement between both parties. Any modifications must be agreed upon in writing and signed by both parties.</p>
     </div>
 
     <!-- Signatures -->
     <div class="sig-section">
-      <div class="section-title">Signatures</div>
-      <p class="sig-intro">By signing below, both parties acknowledge they have read, understood, and agreed to all terms of this contract.</p>
+      <div class="section-title">Electronic Agreement &amp; Acknowledgment</div>
+      <p class="sig-intro">By typing your full legal name below and submitting this form, you acknowledge that you have read, understood, and agreed to all terms of this contract. You agree that your typed name constitutes a legally binding electronic signature under the Illinois Electronic Commerce Security Act (5 ILCS 175) and the federal Electronic Signatures in Global and National Commerce Act (E-SIGN).</p>
       <div class="sig-grid">
         <div class="sig-block">
           <h4>MC / Service Provider</h4>
@@ -344,20 +371,18 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
           <div class="sig-date"><label>Date</label><input type="date" id="mc_date" readonly/></div>
         </div>
         <div class="sig-block">
-          <h4>Client</h4>
-          <div class="sig-canvas-wrap" id="clientSigWrap">
-            <canvas id="clientSigCanvas"></canvas>
-            <div class="sig-placeholder" id="sigPlaceholder">Sign here with finger or mouse</div>
+          <h4>Client — Type Full Legal Name</h4>
+          <div class="sig-canvas-wrap" style="background:#fff;cursor:text;display:flex;align-items:center;padding:0 12px;">
+            <input type="text" id="client_sig_name" placeholder="Type your full legal name" style="border:none;outline:none;width:100%;font-family:'Georgia',serif;font-size:1.3rem;font-style:italic;color:var(--dark);background:transparent;"/>
           </div>
-          <div class="sig-actions"><button class="btn-clear" onclick="clearSig()">Clear</button></div>
           <div class="sig-date"><label>Date</label><input type="date" id="client_date"/></div>
         </div>
       </div>
     </div>
 
     <div class="submit-wrap">
-      <button class="btn-submit" id="submitBtn" onclick="submitContract()">Submit Signed Contract</button>
-      <p class="submit-note">Submitting confirms your digital signature and agreement to all terms above.</p>
+      <button class="btn-submit" id="submitBtn" onclick="submitContract()">Submit &amp; Agree to Contract</button>
+      <p class="submit-note">Submitting constitutes your legally binding electronic signature and full agreement to all terms above.</p>
     </div>
   </div>
 
@@ -377,6 +402,9 @@ const EMAILJS_SERVICE_ID  = 'service_vs453nz';
 const EMAILJS_TEMPLATE_ID = 'template_y44pcjs';
 
 const EVENT_TYPES = ['Wedding Reception','Mehndi','Nikkah','Walima','Baraat','Engagement','Other'];
+
+function fmtDate(d) { if(!d) return '—'; const [y,m,day]=d.split('-'); return `${m}/${day}/${y}`; }
+function fmtTime(t) { if(!t) return '—'; const [h,mn]=t.split(':'); const hr=parseInt(h); return `${hr%12||12}:${mn} ${hr<12?'AM':'PM'}`; }
 
 // ── Host: event block management ──────────────────────────────────────────────
 let hostEventCount = 0;
@@ -593,128 +621,79 @@ if (isClientMode) {
   loadClientView(params);
 }
 
-// ── Signature canvas ──────────────────────────────────────────────────────────
-const canvas = document.getElementById('clientSigCanvas');
-if (canvas) {
-  const ctx = canvas.getContext('2d');
-  const wrap = document.getElementById('clientSigWrap');
-  const placeholder = document.getElementById('sigPlaceholder');
-  let drawing = false, hasSig = false;
+// ── Submit contract ───────────────────────────────────────────────────────────
+window.submitContract = async function() {
+  const sigName = document.getElementById('client_sig_name')?.value?.trim();
+  if (!sigName) { alert('Please type your full legal name to agree to this contract.'); return; }
+  const clientDate = document.getElementById('client_date')?.value;
+  if (!clientDate) { alert('Please enter the date in the signature block.'); return; }
 
-  function resizeCanvas() {
-    const rect = wrap.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    const displayW = rect.width || wrap.offsetWidth || 300;
-    const displayH = 130;
-    canvas.width = displayW * dpr;
-    canvas.height = displayH * dpr;
-    canvas.style.width = displayW + 'px';
-    canvas.style.height = displayH + 'px';
-    ctx.setTransform(1,0,0,1,0,0);
-    ctx.scale(dpr, dpr);
-    ctx.strokeStyle = '#1A1A2E';
-    ctx.lineWidth = 2.2;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-  }
-  resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
+  const btn = document.getElementById('submitBtn');
+  btn.textContent = 'Sending…'; btn.disabled = true;
 
-  function getPos(e) {
-    const r = canvas.getBoundingClientRect();
-    const src = e.touches ? e.touches[0] : e;
-    return { x: src.clientX - r.left, y: src.clientY - r.top };
-  }
-  function startDraw(e) { e.preventDefault(); drawing=true; hasSig=true; placeholder.style.display='none'; const p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); }
-  function draw(e) { if(!drawing) return; e.preventDefault(); const p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); }
-  function endDraw() { drawing=false; }
-
-  canvas.addEventListener('mousedown', startDraw);
-  canvas.addEventListener('mousemove', draw);
-  canvas.addEventListener('mouseup', endDraw);
-  canvas.addEventListener('mouseleave', endDraw);
-  canvas.addEventListener('touchstart', startDraw, {passive:false});
-  canvas.addEventListener('touchmove', draw, {passive:false});
-  canvas.addEventListener('touchend', endDraw);
-
-  window.clearSig = () => {
-    const dpr = window.devicePixelRatio||1;
-    ctx.clearRect(0,0,canvas.width/dpr,canvas.height/dpr);
-    hasSig=false; placeholder.style.display='flex';
-  };
-
-  function fmtDate(d) { if(!d) return '—'; const [y,m,day]=d.split('-'); return `${m}/${day}/${y}`; }
-  function fmtTime(t) { if(!t) return '—'; const [h,mn]=t.split(':'); const hr=parseInt(h); return `${hr%12||12}:${mn} ${hr<12?'AM':'PM'}`; }
-
-  window.submitContract = async function() {
-    if (!hasSig) { alert('Please sign the contract before submitting.'); return; }
-    const clientDate = document.getElementById('client_date')?.value;
-    if (!clientDate) { alert('Please add your date in the signature block.'); return; }
-
-    const btn = document.getElementById('submitBtn');
-    btn.textContent = 'Sending…'; btn.disabled = true;
-
-    const p = new URLSearchParams(window.location.search);
-    const rawSearch2 = window.location.search.slice(1);
-    const rawMap = {};
-    rawSearch2.split('&').forEach(pair => {
-      const eq = pair.indexOf('=');
-      if (eq > 0) {
-        const k = decodeURIComponent(pair.slice(0, eq));
-        const v = decodeURIComponent(pair.slice(eq + 1).replace(/\+/g, ' '));
-        rawMap[k] = v;
-      }
-    });
-
-    // Collect client-entered event details
-    const eventSummaries = [];
-    document.querySelectorAll('.client-event-block').forEach(block => {
-      const id = block.id.replace('cev_','');
-      const etype   = document.getElementById(`c_etype_${id}`)?.value || '—';
-      const edate   = fmtDate(document.getElementById(`c_edate_${id}`)?.value || '');
-      const venue   = document.getElementById(`c_venue_${id}`)?.value || '—';
-      const addr    = document.getElementById(`c_addr_${id}`)?.value || '—';
-      const start   = fmtTime(document.getElementById(`c_start_${id}`)?.value || '');
-      const recep   = fmtTime(document.getElementById(`c_reception_${id}`)?.value || '');
-      const end     = fmtTime(document.getElementById(`c_end_${id}`)?.value || '');
-      eventSummaries.push(`${etype} | ${edate} | ${venue} (${addr}) | Start: ${start} | Reception: ${recep} | End: ${end}`);
-    });
-
-    const addons = [];
-    if (rawMap['addon_reels']==='1') addons.push('Reels/BTS');
-    if (rawMap['addon_baraat']==='1') addons.push('Baraat');
-    if (rawMap['addon_multi']==='1') addons.push('Multi-event');
-    const ot = rawMap['addon_other_text'];
-    if (rawMap['addon_other_check']==='1' && ot) addons.push(ot);
-
-    const templateParams = {
-      client_names:    rawMap['client_names'] || document.getElementById('client_names')?.value || '—',
-      client_phone:    rawMap['client_phone'] || document.getElementById('client_phone')?.value || '—',
-      events_summary:  eventSummaries.join('\n'),
-      addons:          addons.length ? addons.join(', ') : 'None',
-      fee_single:      rawMap['fee_single'] || '—',
-      fee_addons:      rawMap['fee_addons'] || '—',
-      fee_retainer:    rawMap['fee_retainer'] || '—',
-      fee_balance:     rawMap['fee_balance'] || '—',
-      fee_total:       rawMap['fee_total'] || '—',
-      vendor_tags:     document.getElementById('permit_vendor_tags')?.checked ? 'Yes' : 'No',
-      client_date:     fmtDate(clientDate),
-      submitted_at:    new Date().toLocaleString('en-US', {timeZone:'America/Chicago'}),
-    };
-
-    try {
-      emailjs.init(EMAILJS_PUBLIC_KEY);
-      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
-    } catch(err) {
-      console.warn('EmailJS:', err);
-      alert('EmailJS error: ' + JSON.stringify(err));
+  const rawSearch2 = window.location.search.slice(1);
+  const rawMap = {};
+  rawSearch2.split('&').forEach(pair => {
+    const eq = pair.indexOf('=');
+    if (eq > 0) {
+      const k = decodeURIComponent(pair.slice(0, eq));
+      const v = decodeURIComponent(pair.slice(eq + 1).replace(/\+/g, ' '));
+      rawMap[k] = v;
     }
+  });
 
-    document.getElementById('contractForm').style.display = 'none';
-    document.getElementById('successScreen').style.display = 'block';
-    window.scrollTo({top:0, behavior:'smooth'});
+  // Collect event details
+  const eventLines = [];
+  document.querySelectorAll('.client-event-block').forEach(block => {
+    const id = block.id.replace('cev_','');
+    const etype = document.getElementById(`c_etype_${id}`)?.value || '—';
+    const edate = fmtDate(document.getElementById(`c_edate_${id}`)?.value || '');
+    const venue = document.getElementById(`c_venue_${id}`)?.value || '—';
+    const addr  = document.getElementById(`c_addr_${id}`)?.value || '—';
+    const start = fmtTime(document.getElementById(`c_start_${id}`)?.value || '');
+    const recep = fmtTime(document.getElementById(`c_reception_${id}`)?.value || '');
+    const end   = fmtTime(document.getElementById(`c_end_${id}`)?.value || '');
+    eventLines.push(`${etype} — ${edate}\nVenue: ${venue}, ${addr}\nStart: ${start} | Reception: ${recep} | End: ${end}`);
+  });
+
+  const addons = [];
+  if (rawMap['addon_reels']==='1') addons.push('Behind-the-scenes / Reels');
+  if (rawMap['addon_baraat']==='1') addons.push('Baraat / procession hosting');
+  if (rawMap['addon_multi']==='1') addons.push('Multi-event coverage');
+  const ot = rawMap['addon_other_text'];
+  if (rawMap['addon_other_check']==='1' && ot) addons.push(ot);
+
+  const templateParams = {
+    client_names:   rawMap['client_names'] || document.getElementById('client_names')?.value || '—',
+    client_phone:   rawMap['client_phone'] || document.getElementById('client_phone')?.value || '—',
+    events_summary: eventLines.join('\n\n'),
+    addons:         addons.length ? addons.join(', ') : 'None',
+    fee_single:     rawMap['fee_single'] || '—',
+    fee_addons:     rawMap['fee_addons'] || '—',
+    fee_retainer:   rawMap['fee_retainer'] || '—',
+    fee_balance:    rawMap['fee_balance'] || '—',
+    fee_total:      rawMap['fee_total'] || '—',
+    vendor_tags:    document.getElementById('permit_vendor_tags')?.checked ? 'Yes' : 'No',
+    client_sig:     sigName,
+    client_date:    fmtDate(clientDate),
+    mc_date:        fmtDate(new Date().toISOString().split('T')[0]),
+    submitted_at:   new Date().toLocaleString('en-US', {timeZone:'America/Chicago'}),
   };
-}
+
+  try {
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+  } catch(err) {
+    console.warn('EmailJS:', err);
+    alert('EmailJS error: ' + JSON.stringify(err));
+    btn.textContent = 'Submit & Agree to Contract'; btn.disabled = false;
+    return;
+  }
+
+  document.getElementById('contractForm').style.display = 'none';
+  document.getElementById('successScreen').style.display = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+};
 </script>
 </body>
 </html>
