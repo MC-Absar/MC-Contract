@@ -167,7 +167,7 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
       <div class="host-section-label">Add-Ons</div>
       <div class="host-cb-row"><input type="checkbox" id="h_addon_reels"/><label for="h_addon_reels">Behind-the-scenes / reels coordination</label></div>
       <div class="host-cb-row"><input type="checkbox" id="h_addon_baraat"/><label for="h_addon_baraat">Baraat / procession hosting</label></div>
-      <div class="host-cb-row"><input type="checkbox" id="h_addon_multi"/><label for="h_addon_multi">Mehndi or multi-event coverage</label></div>
+      <div class="host-cb-row"><input type="checkbox" id="h_addon_multi"/><label for="h_addon_multi">Multi-event coverage</label></div>
       <div class="addon-other-row">
         <input type="checkbox" id="h_addon_other_check"/>
         <label for="h_addon_other_check">Other:</label>
@@ -248,12 +248,12 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
         <li>Scripted and spontaneous announcements, toasts, and program transitions</li>
         <li>Two (2) pre-event consultations: one planning call and one final run-of-show review</li>
         <li>Customized run-of-show document provided 7 days prior to each event</li>
-        <li>Cultural sensitivity &amp; bilingual announcement support (English / Urdu-Punjabi as needed)</li>
+        <li>Cultural sensitivity and bilingual announcement support (English and Urdu as needed)</li>
       </ul>
       <div class="sub-heading">Optional Add-Ons:</div>
       <div class="checkbox-row"><input type="checkbox" id="addon_reels" disabled/><label>Behind-the-scenes content / social media reels coordination</label></div>
       <div class="checkbox-row"><input type="checkbox" id="addon_baraat" disabled/><label>Baraat / procession hosting</label></div>
-      <div class="checkbox-row"><input type="checkbox" id="addon_multi" disabled/><label>Mehndi or multi-event coverage (see Section 4)</label></div>
+      <div class="checkbox-row"><input type="checkbox" id="addon_multi" disabled/><label>Multi-event coverage (see Section 4)</label></div>
       <div class="checkbox-row"><input type="checkbox" id="addon_other_check" disabled/><label id="addon_other_label">Other add-on</label></div>
     </div>
 
@@ -276,7 +276,7 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
     <!-- 4. Multi-Event -->
     <div class="section">
       <div class="section-title">4. Multi-Event Packages</div>
-      <p class="clause">Clients booking multiple events (e.g., Mehndi + Reception, or Walima) receive a bundled rate. Individual event rates do not apply once a package is agreed upon. Package details and pricing are outlined in a separate addendum attached to this agreement.</p>
+      <p class="clause">Clients booking coverage across multiple events receive a bundled package rate. This may include any combination of events such as a reception, ceremony, or additional celebrations. Individual single-event pricing does not apply once a multi-event package has been agreed upon. Full package details and pricing are outlined in a separate addendum attached to this agreement.</p>
     </div>
 
     <!-- 5. Cancellation -->
@@ -437,8 +437,8 @@ function generateLink() {
   if (ot) p.set('addon_other_text', ot);
 
   ['fee_single','fee_addons','fee_retainer','fee_balance','fee_total'].forEach(f => {
-    const v = document.getElementById('h_'+f)?.value || '';
-    if (v) p.set(f, v);
+    const v = document.getElementById('h_'+f)?.value.trim() || '';
+    p.set(f, encodeURIComponent(v || '—'));
   });
 
   const url = base + '?' + p.toString();
@@ -555,9 +555,10 @@ function loadClientView(p) {
 
   // Fees
   ['fee_single','fee_addons','fee_retainer','fee_balance','fee_total'].forEach(f => {
-    const v = p.get(f);
+    const raw = p.get(f);
+    const v = raw ? decodeURIComponent(raw) : '—';
     const el = document.getElementById('d_' + f);
-    if (el) el.textContent = v || '—';
+    if (el) el.textContent = v;
   });
 
   // MC date
@@ -575,8 +576,13 @@ if (canvas) {
   function resizeCanvas() {
     const rect = wrap.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
-    canvas.width = rect.width * dpr;
-    canvas.height = 130 * dpr;
+    const displayW = rect.width || wrap.offsetWidth || 300;
+    const displayH = 130;
+    canvas.width = displayW * dpr;
+    canvas.height = displayH * dpr;
+    canvas.style.width = displayW + 'px';
+    canvas.style.height = displayH + 'px';
+    ctx.setTransform(1,0,0,1,0,0);
     ctx.scale(dpr, dpr);
     ctx.strokeStyle = '#1A1A2E';
     ctx.lineWidth = 2.2;
