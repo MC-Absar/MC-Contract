@@ -188,6 +188,9 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
 /* ── Sig section spacing ── */
 .sig-section { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:28px; margin-bottom:80px; }
 
+/* ── Spin animation ── */
+@keyframes spin { to { transform: rotate(360deg); } }
+
 /* ── Gold scrollbar ── */
 ::-webkit-scrollbar { width:6px; }
 ::-webkit-scrollbar-track { background:var(--bg); }
@@ -687,6 +690,10 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
     </div>
 
     <div class="submit-wrap">
+      <div class="checkbox-row" style="max-width:500px;margin:0 auto 16px;text-align:left;background:var(--field-bg);border:1px solid var(--border);border-radius:4px;padding:12px 14px;">
+        <input type="checkbox" id="read_all_sections"/>
+        <label for="read_all_sections"><strong>I confirm I have read and understood all sections of this contract</strong> and agree to be bound by all terms contained herein.</label>
+      </div>
       <button class="btn-submit" id="submitBtn" onclick="submitContract()">Submit &amp; Agree to Contract</button>
       <p class="submit-note">Submitting constitutes your legally binding electronic signature and full agreement to all terms above.</p>
     </div>
@@ -1082,43 +1089,89 @@ window.addEventListener('scroll', updateProgress, { passive: true });
 // ── Submit contract ───────────────────────────────────────────────────────────
 window.submitContract = async function() {
   // Required client info fields
-  const clientNamesVal = document.getElementById('client_names')?.value?.trim();
-  if (!clientNamesVal) { alert('Please enter the client name(s) in Section 1.'); return; }
-  const clientPhoneVal = document.getElementById('client_phone')?.value?.trim();
-  if (!clientPhoneVal) { alert('Please enter a primary contact phone number in Section 1.'); return; }
-  const clientEmailVal = document.getElementById('client_email')?.value?.trim();
-  if (!clientEmailVal) { alert('Please enter a client email address in Section 1.'); return; }
+  // Helper: scroll to error field and highlight it
+  function fieldError(el, msg) {
+    if (el) {
+      // Open parent section if collapsed
+      const section = el.closest('.section, .sig-section');
+      if (section) {
+        const title = section.querySelector('.section-title');
+        const body = section.querySelector('.section-body');
+        if (title && title.classList.contains('collapsed')) {
+          title.classList.remove('collapsed');
+          if (body) body.classList.remove('collapsed');
+        }
+      }
+      el.style.borderBottomColor = '#c0392b';
+      el.style.transition = 'border-bottom-color 0.3s';
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => { el.style.borderBottomColor = ''; }, 3000);
+    }
+    alert(msg);
+  }
+
+  const clientNamesEl = document.getElementById('client_names');
+  if (!clientNamesEl?.value?.trim()) { fieldError(clientNamesEl, 'Please enter the client name(s) in Section 1.'); return; }
+  const clientPhoneEl = document.getElementById('client_phone');
+  if (!clientPhoneEl?.value?.trim()) { fieldError(clientPhoneEl, 'Please enter a primary contact phone number in Section 1.'); return; }
+  const clientEmailEl = document.getElementById('client_email');
+  if (!clientEmailEl?.value?.trim()) { fieldError(clientEmailEl, 'Please enter a client email address in Section 1.'); return; }
 
   // Check event details — all venue fields required
   const blocks = document.querySelectorAll('.client-event-block');
   for (let i = 0; i < blocks.length; i++) {
     const id = blocks[i].id.replace('cev_','');
     const num = i + 1;
-    if (!document.getElementById(`c_edate_${id}`)?.value) { alert(`Please enter the event date for Event ${num}.`); return; }
-    if (!document.getElementById(`c_venue_${id}`)?.value?.trim()) { alert(`Please enter the venue name for Event ${num}.`); return; }
-    if (!document.getElementById(`c_addr_${id}`)?.value?.trim()) { alert(`Please enter the venue address for Event ${num}.`); return; }
-    if (!document.getElementById(`c_start_${id}`)?.value) { alert(`Please enter the event start time for Event ${num}.`); return; }
-    if (!document.getElementById(`c_end_${id}`)?.value) { alert(`Please enter the estimated end time for Event ${num}.`); return; }
+    const edateEl = document.getElementById(`c_edate_${id}`);
+    const venueEl = document.getElementById(`c_venue_${id}`);
+    const addrEl  = document.getElementById(`c_addr_${id}`);
+    const startEl = document.getElementById(`c_start_${id}`);
+    const endEl   = document.getElementById(`c_end_${id}`);
+    if (!edateEl?.value) { fieldError(edateEl, `Please enter the event date for Event ${num}.`); return; }
+    if (!venueEl?.value?.trim()) { fieldError(venueEl, `Please enter the venue name for Event ${num}.`); return; }
+    if (!addrEl?.value?.trim()) { fieldError(addrEl, `Please enter the venue address for Event ${num}.`); return; }
+    if (!startEl?.value) { fieldError(startEl, `Please enter the event start time for Event ${num}.`); return; }
+    if (!endEl?.value) { fieldError(endEl, `Please enter the estimated end time for Event ${num}.`); return; }
   }
 
-  // Secondary contact name required
-  const secName = document.getElementById('secondary_contact_name')?.value?.trim();
-  if (!secName) { alert('Please enter a day-of secondary contact name in Section 1.'); return; }
-  const secRelation = document.getElementById('secondary_contact_relation')?.value?.trim();
-  if (!secRelation) { alert('Please select the relationship of your secondary contact in Section 1.'); return; }
+  // Secondary contact
+  const secNameEl = document.getElementById('secondary_contact_name');
+  if (!secNameEl?.value?.trim()) { fieldError(secNameEl, 'Please enter a day-of secondary contact name in Section 1.'); return; }
+  const secRelEl = document.getElementById('secondary_contact_relation');
+  if (!secRelEl?.value?.trim()) { fieldError(secRelEl, 'Please select the relationship of your secondary contact in Section 1.'); return; }
 
   // Required checkboxes
-  if (!document.getElementById('media_release_agree')?.checked) { alert('You must acknowledge and agree to the Media & Content Release (Section 7) to submit this contract.'); return; }
-  if (!document.getElementById('review_acknowledge')?.checked) { alert('Please confirm you have read the Review & Referral Request (Section 17) to proceed.'); return; }
-  if (!document.getElementById('retainer_confirm')?.checked) { alert('Please confirm you understand the retainer is due immediately upon signing.'); return; }
+  if (!document.getElementById('media_release_agree')?.checked) {
+    const el = document.getElementById('media_release_agree');
+    el?.closest('.section')?.querySelector('.section-title.collapsed')?.click();
+    el?.scrollIntoView({ behavior:'smooth', block:'center' });
+    alert('You must acknowledge and agree to the Media & Content Release (Section 7) to submit this contract.'); return;
+  }
+  if (!document.getElementById('review_acknowledge')?.checked) {
+    const el = document.getElementById('review_acknowledge');
+    el?.closest('.section')?.querySelector('.section-title.collapsed')?.click();
+    el?.scrollIntoView({ behavior:'smooth', block:'center' });
+    alert('Please confirm you have read the Review & Referral Request (Section 17) to proceed.'); return;
+  }
+  if (!document.getElementById('retainer_confirm')?.checked) {
+    document.getElementById('retainer_confirm')?.scrollIntoView({ behavior:'smooth', block:'center' });
+    alert('Please confirm you understand the retainer is due immediately upon signing.'); return;
+  }
+  if (!document.getElementById('read_all_sections')?.checked) {
+    document.getElementById('read_all_sections')?.scrollIntoView({ behavior:'smooth', block:'center' });
+    alert('Please confirm you have read and understood all sections of this contract.'); return;
+  }
 
-  const sigName = document.getElementById('client_sig_name')?.value?.trim();
-  if (!sigName) { alert('Please type your full legal name to agree to this contract.'); return; }
-  const clientDate = document.getElementById('client_date')?.value;
-  if (!clientDate) { alert('Please enter the date in the signature block.'); return; }
+  const sigNameEl = document.getElementById('client_sig_name');
+  if (!sigNameEl?.value?.trim()) { fieldError(sigNameEl, 'Please type your full legal name to agree to this contract.'); return; }
+  const clientDateEl = document.getElementById('client_date');
+  if (!clientDateEl?.value) { fieldError(clientDateEl, 'Please enter the date in the signature block.'); return; }
+  const sigName = sigNameEl.value.trim();
+  const clientDate = clientDateEl.value;
 
   const btn = document.getElementById('submitBtn');
-  btn.textContent = 'Sending…'; btn.disabled = true;
+  btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:10px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="animation:spin 0.8s linear infinite;flex-shrink:0;"><circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" stroke-width="3"/><path d="M12 2a10 10 0 0 1 10 10" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>Sending…</span>';
+  btn.disabled = true;
 
   // Fetch client IP for legal record
   let clientIP = 'Not available';
