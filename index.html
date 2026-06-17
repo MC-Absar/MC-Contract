@@ -655,6 +655,16 @@ if (canvas) {
     btn.textContent = 'Sending…'; btn.disabled = true;
 
     const p = new URLSearchParams(window.location.search);
+    const rawSearch2 = window.location.search.slice(1);
+    const rawMap = {};
+    rawSearch2.split('&').forEach(pair => {
+      const eq = pair.indexOf('=');
+      if (eq > 0) {
+        const k = decodeURIComponent(pair.slice(0, eq));
+        const v = decodeURIComponent(pair.slice(eq + 1).replace(/\+/g, ' '));
+        rawMap[k] = v;
+      }
+    });
 
     // Collect client-entered event details
     const eventSummaries = [];
@@ -671,26 +681,25 @@ if (canvas) {
     });
 
     const addons = [];
-    if (p.get('addon_reels')==='1') addons.push('Reels/BTS');
-    if (p.get('addon_baraat')==='1') addons.push('Baraat');
-    if (p.get('addon_multi')==='1') addons.push('Multi-event');
-    const ot = p.get('addon_other_text');
-    if (p.get('addon_other_check')==='1' && ot) addons.push(ot);
+    if (rawMap['addon_reels']==='1') addons.push('Reels/BTS');
+    if (rawMap['addon_baraat']==='1') addons.push('Baraat');
+    if (rawMap['addon_multi']==='1') addons.push('Multi-event');
+    const ot = rawMap['addon_other_text'];
+    if (rawMap['addon_other_check']==='1' && ot) addons.push(ot);
 
     const templateParams = {
-      client_names:    p.get('client_names') || document.getElementById('client_names')?.value || '—',
-      client_phone:    p.get('client_phone') || document.getElementById('client_phone')?.value || '—',
+      client_names:    rawMap['client_names'] || document.getElementById('client_names')?.value || '—',
+      client_phone:    rawMap['client_phone'] || document.getElementById('client_phone')?.value || '—',
       events_summary:  eventSummaries.join('\n'),
       addons:          addons.length ? addons.join(', ') : 'None',
-      fee_single:      p.get('fee_single') || '—',
-      fee_addons:      p.get('fee_addons') || '—',
-      fee_retainer:    p.get('fee_retainer') || '—',
-      fee_balance:     p.get('fee_balance') || '—',
-      fee_total:       p.get('fee_total') || '—',
+      fee_single:      rawMap['fee_single'] || '—',
+      fee_addons:      rawMap['fee_addons'] || '—',
+      fee_retainer:    rawMap['fee_retainer'] || '—',
+      fee_balance:     rawMap['fee_balance'] || '—',
+      fee_total:       rawMap['fee_total'] || '—',
       vendor_tags:     document.getElementById('permit_vendor_tags')?.checked ? 'Yes' : 'No',
       client_date:     fmtDate(clientDate),
       submitted_at:    new Date().toLocaleString('en-US', {timeZone:'America/Chicago'}),
-      signature_image: canvas.toDataURL('image/png'),
     };
 
     try {
