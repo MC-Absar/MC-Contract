@@ -705,7 +705,10 @@ if (canvas) {
     try {
       emailjs.init(EMAILJS_PUBLIC_KEY);
       await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
-    } catch(err) { console.warn('EmailJS:', err); }
+    } catch(err) {
+      console.warn('EmailJS:', err);
+      alert('EmailJS error: ' + JSON.stringify(err));
+    }
 
     document.getElementById('contractForm').style.display = 'none';
     document.getElementById('successScreen').style.display = 'block';
