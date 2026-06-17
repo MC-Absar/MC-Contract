@@ -518,6 +518,30 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
       </div>
     </div>
 
+    <!-- Signatures -->
+    <div class="sig-section">
+      <div class="section-title" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot required"></span>Electronic Agreement &amp; Acknowledgment</span><span class="toggle-icon">&#9660;</span></div>
+      <div class="section-body">
+      <p class="sig-intro">By typing your full legal name below and submitting this form, you acknowledge that you have read, understood, and agreed to all terms of this contract. You agree that your typed name constitutes a legally binding electronic signature under the Illinois Electronic Commerce Security Act (5 ILCS 175) and the federal Electronic Signatures in Global and National Commerce Act (E-SIGN).</p>
+      <div class="sig-grid">
+        <div class="sig-block">
+          <h4>MC / Service Provider</h4>
+          <div class="sig-canvas-wrap" style="background:#f0f0ee;cursor:default;">
+            <div class="mc-prefilled">Absar Najam</div>
+          </div>
+          <div class="sig-date"><label>Date</label><input type="date" id="mc_date" readonly/></div>
+        </div>
+        <div class="sig-block">
+          <h4>Client — Type Full Legal Name</h4>
+          <div class="sig-canvas-wrap" style="background:#fff;cursor:text;display:flex;align-items:center;padding:0 12px;">
+            <input type="text" id="client_sig_name" placeholder="Type your full legal name" style="border:none;outline:none;width:100%;font-family:'Georgia',serif;font-size:1.3rem;font-style:italic;color:var(--dark);background:transparent;"/>
+          </div>
+          <div class="sig-date"><label>Date</label><input type="date" id="client_date"/></div>
+        </div>
+      </div>
+      </div>
+    </div>
+
     <div class="submit-wrap">
       <button class="btn-submit" id="submitBtn" onclick="submitContract()">Submit &amp; Agree to Contract</button>
       <p class="submit-note">Submitting constitutes your legally binding electronic signature and full agreement to all terms above.</p>
