@@ -15,6 +15,22 @@
 }
 body { font-family: 'Georgia', serif; background: var(--bg); color: var(--body); line-height: 1.6; }
 
+/* ── Background texture ── */
+#contractView { background: var(--bg); }
+#contractView::before {
+  content: '';
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 40px,
+    rgba(201,168,76,0.03) 40px,
+    rgba(201,168,76,0.03) 41px
+  );
+  pointer-events: none; z-index: 0;
+}
+#contractView > * { position: relative; z-index: 1; }
+
 /* ── Host panel ── */
 #hostPanel { min-height:100vh; display:flex; align-items:center; justify-content:center; background:var(--dark); padding:24px; }
 .host-card { background:#fff; border-radius:8px; width:100%; max-width:640px; overflow:hidden; box-shadow:0 8px 40px rgba(0,0,0,0.35); }
@@ -61,14 +77,15 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--body);
 
 /* ── Contract view ── */
 #contractView { display:none; }
-.header { background:var(--dark); color:#fff; text-align:center; padding:36px 24px 28px; position:relative; }
-.header::after { content:''; display:block; height:4px; background:var(--gold); position:absolute; bottom:0;left:0;right:0; }
-.header h1 { font-size:2rem; letter-spacing:0.08em; font-weight:700; }
-.header .tagline { font-size:0.9rem; color:#aaa; font-style:italic; margin-top:4px; }
-.header .contact { font-size:0.8rem; color:#bbb; margin-top:6px; font-family:'Arial',sans-serif; }
-.header .contact a { color:var(--gold-light); text-decoration:none; }
-.contract-title { text-align:center; padding:32px 24px 8px; }
-.contract-title h2 { font-size:1.3rem; letter-spacing:0.12em; color:var(--dark); text-transform:uppercase; }
+.header { background:var(--dark); color:#fff; text-align:center; padding:40px 24px 32px; position:relative; }
+.header::after { content:''; display:block; height:4px; background:linear-gradient(to right, transparent, var(--gold), transparent); position:absolute; bottom:0;left:0;right:0; }
+.header h1 { font-size:2rem; letter-spacing:0.12em; font-weight:700; text-shadow:0 2px 12px rgba(201,168,76,0.15); }
+.header .tagline { font-size:0.88rem; color:#C9A84C; font-style:italic; margin-top:6px; letter-spacing:0.08em; }
+.header .contact { font-size:0.78rem; color:#bbb; margin-top:10px; font-family:'Arial',sans-serif; }
+.header .contact a { color:var(--gold-light); text-decoration:none; transition:color 0.2s; }
+.header .contact a:hover { color:#fff; }
+.contract-title { text-align:center; padding:28px 24px 8px; }
+.contract-title h2 { font-size:1.4rem; letter-spacing:0.18em; color:var(--dark); text-transform:uppercase; font-weight:700; }
 .contract-title p { font-size:0.8rem; color:var(--muted); font-style:italic; margin-top:6px; }
 .container { max-width:780px; margin:0 auto; padding:0 16px 60px; }
 
@@ -242,6 +259,9 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
 ══════════════════════════════════════════ -->
 <div id="contractView">
   <div class="header">
+    <div style="width:72px;height:72px;border-radius:50%;border:2px solid #C9A84C;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;background:rgba(201,168,76,0.1);">
+      <span style="font-family:'Georgia',serif;font-size:0.85rem;font-weight:700;color:#C9A84C;letter-spacing:0.08em;text-transform:uppercase;">MC<br/>Absar</span>
+    </div>
     <h1>ABSAR NAJAM</h1>
     <div class="tagline">MC &amp; Event Host</div>
     <div class="contact">
@@ -252,7 +272,17 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
   </div>
 
   <div class="contract-title">
+    <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:14px;">
+      <div style="flex:1;max-width:80px;height:1px;background:linear-gradient(to right,transparent,#C9A84C);"></div>
+      <span style="color:#C9A84C;font-size:0.85rem;letter-spacing:0.2em;">✦</span>
+      <div style="flex:1;max-width:80px;height:1px;background:linear-gradient(to left,transparent,#C9A84C);"></div>
+    </div>
     <h2>MC Services Agreement</h2>
+    <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:14px;margin-bottom:6px;">
+      <div style="flex:1;max-width:80px;height:1px;background:linear-gradient(to right,transparent,#C9A84C);"></div>
+      <span style="color:#C9A84C;font-size:0.85rem;letter-spacing:0.2em;">✦</span>
+      <div style="flex:1;max-width:80px;height:1px;background:linear-gradient(to left,transparent,#C9A84C);"></div>
+    </div>
     <p>This contract is legally binding once signed by both parties.</p>
   </div>
 
@@ -267,7 +297,7 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
 
     <!-- 1. Event Details -->
     <div class="section">
-      <div class="section-title" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot required"></span>1. Event Details</span><span class="toggle-icon">&#9660;</span></div>
+      <div class="section-title" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot required"></span>📅 1. Event Details</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body">
 
       <div class="client-field-row two" style="margin-bottom:12px;">
@@ -343,7 +373,7 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
       </div>
     <!-- 2. Scope -->
     <div class="section">
-      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>2. Scope of Services</span><span class="toggle-icon">&#9660;</span></div>
+      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>🎤 2. Scope of Services</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body collapsed">
       <p class="clause">Absar Najam ("MC") agrees to provide the following services for the above event(s):</p>
       <ul class="clause-list">
@@ -363,7 +393,7 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
       </div>
     <!-- 3. Compensation -->
     <div class="section">
-      <div class="section-title" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot required"></span>3. Compensation</span><span class="toggle-icon">&#9660;</span></div>
+      <div class="section-title" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot required"></span>💰 3. Compensation</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body">
       <table class="fee-table">
         <thead><tr><th>Service</th><th>Amount</th></tr></thead>
@@ -380,14 +410,14 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
       </div>
     <!-- 4. Multi-Event -->
     <div class="section">
-      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>4. Multi-Event Packages</span><span class="toggle-icon">&#9660;</span></div>
+      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>📦 4. Multi-Event Packages</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body collapsed">
       <p class="clause">Clients booking coverage across multiple events receive a bundled package rate. This may include any combination of events such as a reception, ceremony, or additional celebrations. Individual single-event pricing does not apply once a multi-event package has been agreed upon. Full package details and pricing are outlined in a separate addendum attached to this agreement.</p>
     </div>
       </div>
     <!-- 5. Cancellation -->
     <div class="section">
-      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>5. Cancellation &amp; Rescheduling Policy</span><span class="toggle-icon">&#9660;</span></div>
+      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>❌ 5. Cancellation &amp; Rescheduling Policy</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body collapsed">
       <div class="sub-heading">Cancellation by Client:</div>
       <ul class="clause-list">
@@ -403,7 +433,7 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
       </div>
     <!-- 6. Client Responsibilities -->
     <div class="section">
-      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>6. Client Responsibilities</span><span class="toggle-icon">&#9660;</span></div>
+      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>✅ 6. Client Responsibilities</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body collapsed">
       <ul class="clause-list">
         <li>Provide a finalized run-of-show no later than 10 days before each event.</li>
@@ -416,7 +446,7 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
       </div>
     <!-- 6b. Event Planner Coordination -->
     <div class="section">
-      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>6b. Event Planner Coordination</span><span class="toggle-icon">&#9660;</span></div>
+      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>🗂️ 6b. Event Planner Coordination</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body collapsed">
       <p class="clause">If the Client has retained an event planner or coordinator, the MC acknowledges their role in the day-of logistics. However, the MC takes binding direction exclusively from the primary Client contact named in Section 1 of this agreement. The MC is not obligated to follow instructions from the event planner that conflict with this contract or the agreed-upon run-of-show, unless the Client provides written authorization in advance.</p>
       <p class="clause">The MC shall not be held liable for any disruptions, delays, or program changes that result from miscommunication between the Client, their event planner, and other vendors. Any last-minute changes to the program requested by the event planner on the day of the event must be approved by the Client directly.</p>
@@ -424,7 +454,7 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
       </div>
     <!-- 7. Media -->
     <div class="section">
-      <div class="section-title" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot required"></span>7. Media &amp; Content Release</span><span class="toggle-icon">&#9660;</span></div>
+      <div class="section-title" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot required"></span>📸 7. Media &amp; Content Release</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body">
       <p class="clause">By signing this agreement, the Client grants the MC full permission to capture, use, and share behind-the-scenes content, highlight moments, and event footage for social media and promotional purposes. This release is a required condition of service and is non-negotiable.</p>
       <div class="checkbox-row"><input type="checkbox" id="media_release_agree"/><label for="media_release_agree"><strong>I acknowledge and agree to the Media &amp; Content Release above.</strong> (Required)</label></div>
@@ -433,7 +463,7 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
       </div>
     <!-- 8. Liability -->
     <div class="section">
-      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>8. Limitation of Liability</span><span class="toggle-icon">&#9660;</span></div>
+      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>🛡️ 8. Limitation of Liability</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body collapsed">
       <p class="clause">The MC's total liability to the Client under this agreement, regardless of the nature of the claim (contract, tort, negligence, or otherwise), shall not exceed the total fees paid by the Client under this agreement. The MC shall not be liable for any indirect, incidental, special, consequential, or punitive damages of any kind, including but not limited to loss of enjoyment, emotional distress, lost profits, or reputational harm.</p>
       <div class="sub-heading">The MC is expressly not responsible for:</div>
@@ -453,7 +483,7 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
       </div>
     <!-- 9. Governing Law & Dispute Resolution -->
     <div class="section">
-      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>9. Governing Law &amp; Dispute Resolution</span><span class="toggle-icon">&#9660;</span></div>
+      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>⚖️ 9. Governing Law &amp; Dispute Resolution</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body collapsed">
       <p class="clause">This agreement shall be governed by and construed in accordance with the laws of the State of Illinois, without regard to its conflict of law provisions. Any disputes arising out of or relating to this agreement shall first be submitted to good-faith mediation between both parties before any legal action is pursued. If mediation fails, disputes shall be resolved exclusively in the courts of Cook or DuPage County, Illinois.</p>
       <p class="clause">The Client agrees that any claim or cause of action arising from this agreement must be filed within one (1) year of the event date, after which any such claim is permanently barred.</p>
@@ -461,7 +491,7 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
       </div>
     <!-- 10. Force Majeure -->
     <div class="section">
-      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>10. Force Majeure</span><span class="toggle-icon">&#9660;</span></div>
+      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>🌪️ 10. Force Majeure</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body collapsed">
       <p class="clause">Neither party shall be held liable for failure to perform any obligation under this agreement if such failure results from circumstances beyond that party's reasonable control, including but not limited to: acts of God, extreme weather events, natural disasters, fire, flood, pandemic, epidemic, government-imposed restrictions or shutdowns, civil unrest, power outages, or any other event that makes performance impossible or commercially impractical.</p>
       <p class="clause">In the event of a force majeure, the MC will make every reasonable effort to fulfill the contracted services or provide an alternative arrangement. If the event is cancelled due to force majeure, the retainer shall be retained by the MC as compensation for reserved time and preparation. Any payments beyond the retainer will be refunded on a pro-rated basis.</p>
@@ -469,14 +499,14 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
       </div>
     <!-- 11. Indemnification -->
     <div class="section">
-      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>11. Indemnification</span><span class="toggle-icon">&#9660;</span></div>
+      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>📋 11. Indemnification</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body collapsed">
       <p class="clause">The Client agrees to indemnify, defend, and hold harmless Absar Najam, his agents, and representatives from and against any and all claims, damages, losses, costs, and expenses (including reasonable attorney's fees) arising out of or relating to: (a) the Client's breach of any provision of this agreement; (b) the acts or omissions of the Client, their guests, or family members during the event; (c) any claim by a third party related to the event that is not directly caused by the MC's own gross negligence or willful misconduct.</p>
     </div>
       </div>
     <!-- 12. MC Punctuality & Late Arrival -->
     <div class="section">
-      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>12. MC Punctuality &amp; Late Arrival</span><span class="toggle-icon">&#9660;</span></div>
+      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>⏰ 12. MC Punctuality &amp; Late Arrival</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body collapsed">
       <p class="clause">The MC commits to arriving at the venue no later than sixty (60) minutes before the agreed program start time. In the event of an unforeseen delay (traffic, emergency, or other circumstance beyond the MC's control), the MC will notify the Client's primary contact as soon as possible.</p>
       <p class="clause">A grace period of thirty (30) minutes is understood for circumstances outside the MC's control. If the MC is unable to perform due to a verified emergency and no qualified substitute can be arranged, a full refund of all payments received will be issued. The MC's liability in such cases is limited to a refund of fees paid and does not extend to any additional damages, losses, or costs incurred by the Client.</p>
@@ -484,7 +514,7 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
       </div>
     <!-- 13. Payment Terms & Late Fees -->
     <div class="section">
-      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>13. Payment Terms &amp; Late Fees</span><span class="toggle-icon">&#9660;</span></div>
+      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>💳 13. Payment Terms &amp; Late Fees</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body collapsed">
       <p class="clause">The non-refundable retainer is due upon signing this agreement and secures the MC's availability for the event date(s). The remaining balance is due no later than seven (7) days prior to the first event date.</p>
       <div class="sub-heading">Late Payment:</div>
@@ -499,7 +529,7 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
       </div>
     <!-- 14. Travel & Distance Fee -->
     <div class="section">
-      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>14. Travel &amp; Distance Fee</span><span class="toggle-icon">&#9660;</span></div>
+      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>✈️ 14. Travel &amp; Distance Fee</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body collapsed">
       <p class="clause">Events located within thirty (30) miles of Streamwood, Illinois are included in the base contract fee. For events located more than thirty (30) miles from Streamwood, a travel fee will be assessed as follows:</p>
       <ul class="clause-list">
@@ -514,7 +544,7 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
       </div>
     <!-- 15. Outdoor Events & Weather -->
     <div class="section">
-      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>15. Outdoor Events &amp; Weather</span><span class="toggle-icon">&#9660;</span></div>
+      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>🌤️ 15. Outdoor Events &amp; Weather</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body collapsed">
       <p class="clause">For events held fully or partially outdoors, the Client is responsible for ensuring adequate shelter, shade, or weather protection for the MC and all audio-visual equipment. The MC reserves the right to pause or relocate the program if outdoor conditions pose a safety risk, including but not limited to lightning, extreme heat (above 100°F), heavy rain, or high winds.</p>
       <p class="clause">If inclement weather forces an event to be cancelled or relocated after the MC has arrived on-site, the full contract fee is still owed. The MC shall not be held liable for program disruptions caused by weather conditions.</p>
@@ -522,7 +552,7 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
       </div>
     <!-- 16. Confidentiality & Non-Disparagement -->
     <div class="section">
-      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>16. Confidentiality &amp; Non-Disparagement</span><span class="toggle-icon">&#9660;</span></div>
+      <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>🔒 16. Confidentiality &amp; Non-Disparagement</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body collapsed">
       <p class="clause">Both parties agree to keep the specific financial terms of this agreement confidential and not to disclose them publicly or to third parties without mutual written consent.</p>
       <p class="clause">The Client agrees not to make any false, misleading, or disparaging statements about the MC, his services, or his business — whether publicly, on social media, or in review platforms — that are not based on factual, documented occurrences. The MC agrees to the same standard regarding the Client. This clause survives the termination of this agreement.</p>
@@ -530,7 +560,7 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
       </div>
     <!-- 17. Review & Referral Request -->
     <div class="section">
-      <div class="section-title" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot required"></span>17. Review &amp; Referral Request</span><span class="toggle-icon">&#9660;</span></div>
+      <div class="section-title" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot required"></span>⭐ 17. Review &amp; Referral Request</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body">
       <p class="clause">The MC kindly requests that satisfied Clients consider sharing an honest review or testimonial via Instagram DM or text message to be featured on <strong>@MC_Absar</strong> on Instagram. Reviews and testimonials help support a small business and are deeply appreciated. There is no obligation to do so, and this request has no bearing on the services provided.</p>
       <p class="clause">If the Client refers another couple or client who books the MC's services, the referring Client will receive a $50 credit toward any future booking as a thank-you gesture.</p>
@@ -540,7 +570,7 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
 
     <!-- Signatures -->
     <div class="sig-section">
-      <div class="section-title" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot required"></span>Electronic Agreement &amp; Acknowledgment</span><span class="toggle-icon">&#9660;</span></div>
+      <div class="section-title" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot required"></span>✍️ Electronic Agreement &amp; Acknowledgment</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body">
       <p class="sig-intro">By typing your full legal name below and submitting this form, you acknowledge that you have read, understood, and agreed to all terms of this contract. You agree that your typed name constitutes a legally binding electronic signature under the Illinois Electronic Commerce Security Act (5 ILCS 175) and the federal Electronic Signatures in Global and National Commerce Act (E-SIGN).</p>
       <div class="checkbox-row" style="background:#fdecea;border:1px solid #f5c6c6;border-radius:4px;padding:10px 14px;margin-bottom:16px;">
