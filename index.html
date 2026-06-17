@@ -455,15 +455,9 @@ function copyLink() {
   });
 }
 
-// ── Detect mode ───────────────────────────────────────────────────────────────
+// ── Detect mode — called after all functions are defined ─────────────────────
 const params = new URLSearchParams(window.location.search);
 const isClientMode = params.has('d');
-
-if (isClientMode) {
-  document.getElementById('hostPanel').style.display = 'none';
-  document.getElementById('contractView').style.display = 'block';
-  loadClientView(params);
-}
 
 // ── Client: load pre-filled data ──────────────────────────────────────────────
 let clientEventCount = 0;
@@ -543,9 +537,21 @@ function removeClientEvent(idx) {
 }
 
 function loadClientView(p) {
+  // Parse directly from raw URL — most reliable across all browsers
+  const rawSearch = window.location.search.slice(1);
+  const rawMap = {};
+  rawSearch.split('&').forEach(pair => {
+    const eq = pair.indexOf('=');
+    if (eq > 0) {
+      const k = decodeURIComponent(pair.slice(0, eq));
+      const v = decodeURIComponent(pair.slice(eq + 1).replace(/\+/g, ' '));
+      rawMap[k] = v;
+    }
+  });
+
   // Client name / phone
-  const cn = p.get('client_names') || '';
-  const cp = p.get('client_phone') || '';
+  const cn = rawMap['client_names'] || '';
+  const cp = rawMap['client_phone'] || '';
   const cnEl = document.getElementById('client_names');
   const cpEl = document.getElementById('client_phone');
   if (cn && cnEl) { cnEl.value = cn; cnEl.classList.add('prefilled'); cnEl.readOnly = true; }
@@ -553,7 +559,7 @@ function loadClientView(p) {
 
   // Events
   try {
-    const events = JSON.parse(p.get('events') || '[]');
+    const events = JSON.parse(rawMap['events'] || '[]');
     if (events.length > 0) {
       events.forEach(ev => addClientEvent(ev));
     } else {
@@ -564,20 +570,27 @@ function loadClientView(p) {
   // Add-ons
   ['addon_reels','addon_baraat','addon_multi','addon_other_check'].forEach(f => {
     const el = document.getElementById(f);
-    if (el) el.checked = p.get(f) === '1';
+    if (el) el.checked = rawMap[f] === '1';
   });
-  const ot = p.get('addon_other_text');
+  const ot = rawMap['addon_other_text'];
   if (ot) document.getElementById('addon_other_label').textContent = 'Other: ' + ot;
 
   // Fees
   ['fee_single','fee_addons','fee_retainer','fee_balance','fee_total'].forEach(f => {
-    const v = p.get(f) || '—';
+    const v = rawMap[f] || '—';
     const el = document.getElementById('d_' + f);
     if (el) el.textContent = v;
   });
 
   // MC date
   document.getElementById('mc_date').value = new Date().toISOString().split('T')[0];
+}
+
+// ── Activate client mode now that all functions are defined ───────────────────
+if (isClientMode) {
+  document.getElementById('hostPanel').style.display = 'none';
+  document.getElementById('contractView').style.display = 'block';
+  loadClientView(params);
 }
 
 // ── Signature canvas ──────────────────────────────────────────────────────────
