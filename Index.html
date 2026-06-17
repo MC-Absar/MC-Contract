@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MC Services Agreement – Absar Najam</title>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --gold: #C9A84C; --gold-light: #e8c96a; --dark: #1A1A2E;
+  --body: #333; --muted: #666; --lighter: #999;
+  --bg: #FAFAF8; --card: #fff; --border: #e0e0e0;
+  --field-bg: #F7F6F3; --red: #c0392b;
+}
+body { font-family: 'Georgia', serif; background: var(--bg); color: var(--body); line-height: 1.6; }
+
+/* ── Host panel ── */
+#hostPanel { min-height:100vh; display:flex; align-items:center; justify-content:center; background:var(--dark); padding:24px; }
+.host-card { background:#fff; border-radius:8px; width:100%; max-width:640px; overflow:hidden; box-shadow:0 8px 40px rgba(0,0,0,0.35); }
+.host-card-header { background:var(--dark); padding:28px 32px 20px; border-bottom:3px solid var(--gold); }
+.host-card-header h1 { color:#fff; font-size:1.4rem; letter-spacing:0.06em; }
+.host-card-header p { color:#aaa; font-size:0.8rem; font-style:italic; margin-top:4px; }
+.host-card-body { padding:28px 32px; }
+.host-section-label { font-family:'Arial',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--dark); border-bottom:2px solid var(--gold); padding-bottom:6px; margin:20px 0 14px; }
+.host-section-label:first-child { margin-top:0; }
+.hf { display:flex; flex-direction:column; gap:4px; margin-bottom:12px; }
+.hf label { font-family:'Arial',sans-serif; font-size:0.7rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; }
+.hf input, .hf select { border:none; border-bottom:1.5px solid var(--border); background:transparent; padding:6px 2px; font-size:0.9rem; font-family:'Georgia',serif; color:var(--body); outline:none; width:100%; transition:border-color 0.2s; }
+.hf input:focus { border-bottom-color:var(--gold); }
+.hrow { display:grid; gap:14px; margin-bottom:0; }
+.hrow.two { grid-template-columns:1fr 1fr; }
+.hrow.three { grid-template-columns:1fr 1fr 1fr; }
+.hrow.full { grid-template-columns:1fr; }
+.host-cb-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:0.88rem; }
+.host-cb-row input[type=checkbox] { accent-color:var(--gold); width:15px; height:15px; flex-shrink:0; }
+.addon-other-row { display:flex; align-items:center; gap:8px; }
+.addon-other-row label { font-size:0.88rem; white-space:nowrap; }
+.addon-other-row input { flex:1; border:none; border-bottom:1px solid var(--border); font-size:0.88rem; padding:4px 2px; outline:none; font-family:'Georgia',serif; background:transparent; }
+.fee-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+
+/* ── Host event blocks ── */
+.host-event-block { border:1px solid var(--border); border-radius:6px; padding:16px; margin-bottom:12px; position:relative; background:var(--field-bg); }
+.host-event-block .event-label { font-family:'Arial',sans-serif; font-size:0.72rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; }
+.btn-remove-event { background:none; border:none; color:#ccc; font-size:1rem; cursor:pointer; padding:0 2px; line-height:1; }
+.btn-remove-event:hover { color:var(--red); }
+.btn-add-event { width:100%; padding:9px; border:1.5px dashed var(--border); background:transparent; border-radius:5px; font-family:'Arial',sans-serif; font-size:0.8rem; color:var(--muted); cursor:pointer; margin-bottom:4px; transition:all 0.2s; letter-spacing:0.04em; }
+.btn-add-event:hover { border-color:var(--gold); color:var(--gold); }
+
+/* ── Generate button ── */
+.btn-generate { width:100%; margin-top:24px; padding:14px; background:var(--gold); color:#fff; border:none; border-radius:4px; font-family:'Arial',sans-serif; font-weight:700; font-size:0.95rem; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:background 0.2s; box-shadow:0 2px 10px rgba(201,168,76,0.4); }
+.btn-generate:hover { background:#b8923f; }
+.generated-link-box { display:none; margin-top:16px; background:var(--field-bg); border:1px solid var(--border); border-radius:4px; padding:14px 16px; }
+.generated-link-box p { font-family:'Arial',sans-serif; font-size:0.8rem; color:var(--muted); margin-bottom:8px; }
+.link-copy-row { display:flex; gap:8px; }
+.link-copy-row input { flex:1; border:1px solid var(--border); border-radius:3px; padding:7px 10px; font-size:0.78rem; font-family:monospace; background:#fff; color:var(--body); outline:none; }
+.btn-copy { background:var(--dark); color:#fff; border:none; border-radius:3px; padding:7px 14px; font-size:0.78rem; font-family:'Arial',sans-serif; font-weight:700; cursor:pointer; white-space:nowrap; }
+.btn-copy:hover { background:#2d2d4a; }
+.copy-tip { font-size:0.72rem; color:var(--gold); margin-top:6px; font-family:'Arial',sans-serif; display:none; }
+.host-lock-note { font-size:0.75rem; color:var(--muted); font-style:italic; margin-top:4px; font-family:'Arial',sans-serif; }
+
+/* ── Contract view ── */
+#contractView { display:none; }
+.header { background:var(--dark); color:#fff; text-align:center; padding:36px 24px 28px; position:relative; }
+.header::after { content:''; display:block; height:4px; background:var(--gold); position:absolute; bottom:0;left:0;right:0; }
+.header h1 { font-size:2rem; letter-spacing:0.08em; font-weight:700; }
+.header .tagline { font-size:0.9rem; color:#aaa; font-style:italic; margin-top:4px; }
+.header .contact { font-size:0.8rem; color:#bbb; margin-top:6px; font-family:'Arial',sans-serif; }
+.header .contact a { color:var(--gold-light); text-decoration:none; }
+.contract-title { text-align:center; padding:32px 24px 8px; }
+.contract-title h2 { font-size:1.3rem; letter-spacing:0.12em; color:var(--dark); text-transform:uppercase; }
+.contract-title p { font-size:0.8rem; color:var(--muted); font-style:italic; margin-top:6px; }
+.container { max-width:780px; margin:0 auto; padding:0 16px 60px; }
+.section { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:24px 28px; margin-bottom:18px; }
+.section-title { font-family:'Arial',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--dark); padding-bottom:8px; border-bottom:2px solid var(--gold); margin-bottom:18px; }
+
+/* ── Client event blocks ── */
+.client-event-block { border:1px solid var(--border); border-radius:6px; padding:18px 20px; margin-bottom:14px; background:var(--field-bg); }
+.client-event-block .event-badge { font-family:'Arial',sans-serif; font-size:0.7rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.event-badge-name { background:var(--gold); color:#fff; padding:2px 8px; border-radius:10px; font-size:0.65rem; }
+.client-field-row { display:grid; gap:12px; margin-bottom:12px; }
+.client-field-row.two { grid-template-columns:1fr 1fr; }
+.client-field-row.three { grid-template-columns:1fr 1fr 1fr; }
+.client-field-row.full { grid-template-columns:1fr; }
+.field-group { display:flex; flex-direction:column; gap:4px; }
+.field-group label { font-family:'Arial',sans-serif; font-size:0.72rem; font-weight:700; color:var(--muted); letter-spacing:0.05em; text-transform:uppercase; }
+.field-group input { border:none; border-bottom:1.5px solid var(--border); background:transparent; padding:6px 2px; font-size:0.92rem; font-family:'Georgia',serif; color:var(--body); outline:none; transition:border-color 0.2s; width:100%; }
+.field-group input:focus { border-bottom-color:var(--gold); }
+.field-group input.prefilled { color:var(--dark); border-bottom-color:var(--gold); }
+.field-group input[readonly].prefilled { cursor:default; opacity:0.85; }
+.btn-add-client-event { width:100%; padding:10px; border:1.5px dashed var(--border); background:transparent; border-radius:5px; font-family:'Arial',sans-serif; font-size:0.82rem; color:var(--muted); cursor:pointer; margin-top:4px; transition:all 0.2s; }
+.btn-add-client-event:hover { border-color:var(--gold); color:var(--gold); }
+.btn-remove-client-event { background:none; border:none; color:#ccc; font-size:0.85rem; cursor:pointer; margin-left:auto; font-family:'Arial',sans-serif; }
+.btn-remove-client-event:hover { color:var(--red); }
+
+p.clause { font-size:0.88rem; color:var(--body); margin-bottom:10px; line-height:1.65; }
+ul.clause-list { margin:6px 0 12px 18px; font-size:0.88rem; color:var(--body); }
+ul.clause-list li { margin-bottom:5px; line-height:1.55; }
+.sub-heading { font-family:'Arial',sans-serif; font-size:0.8rem; font-weight:700; color:var(--dark); margin:12px 0 4px; }
+.fee-table { width:100%; border-collapse:collapse; font-family:'Arial',sans-serif; font-size:0.85rem; margin-bottom:12px; }
+.fee-table thead tr { background:var(--dark); color:#fff; }
+.fee-table thead th { padding:9px 12px; text-align:left; font-weight:600; letter-spacing:0.04em; }
+.fee-table tbody tr:nth-child(even) { background:var(--field-bg); }
+.fee-table tbody td { padding:7px 12px; border-bottom:1px solid var(--border); }
+.fee-table .prefilled-cell { font-weight:700; color:var(--dark); }
+.fee-table .total-row td { font-weight:700; font-size:0.92rem; color:var(--dark); border-top:2px solid var(--dark); }
+.checkbox-row { display:flex; align-items:flex-start; gap:10px; margin-bottom:10px; font-size:0.88rem; }
+.checkbox-row input[type=checkbox] { margin-top:3px; accent-color:var(--gold); width:16px; height:16px; flex-shrink:0; }
+
+/* ── Signatures ── */
+.sig-section { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:28px; margin-bottom:18px; }
+.sig-intro { font-size:0.85rem; color:var(--muted); font-style:italic; margin-bottom:24px; }
+.sig-grid { display:grid; grid-template-columns:1fr 1fr; gap:28px; }
+.sig-block h4 { font-family:'Arial',sans-serif; font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--dark); margin-bottom:10px; }
+.sig-canvas-wrap { border:1.5px solid var(--border); border-radius:4px; background:var(--field-bg); position:relative; overflow:hidden; }
+.sig-canvas-wrap canvas { display:block; width:100%; height:130px; cursor:crosshair; touch-action:none; }
+.sig-actions { display:flex; justify-content:flex-end; margin-top:4px; }
+.btn-clear { background:none; border:none; font-size:0.75rem; color:var(--lighter); cursor:pointer; padding:2px 4px; font-family:'Arial',sans-serif; }
+.btn-clear:hover { color:var(--red); }
+.sig-placeholder { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; color:#ccc; font-size:0.8rem; font-style:italic; font-family:'Arial',sans-serif; }
+.sig-date { margin-top:12px; }
+.sig-date label { font-family:'Arial',sans-serif; font-size:0.72rem; font-weight:700; color:var(--muted); letter-spacing:0.05em; text-transform:uppercase; display:block; margin-bottom:4px; }
+.sig-date input { border:none; border-bottom:1.5px solid var(--border); background:transparent; font-size:0.9rem; font-family:'Georgia',serif; padding:4px 2px; width:100%; outline:none; }
+.sig-date input:focus { border-bottom-color:var(--gold); }
+.mc-prefilled { display:flex; align-items:center; justify-content:center; height:130px; font-family:'Georgia',serif; font-size:1.6rem; color:var(--dark); font-style:italic; opacity:0.55; }
+.submit-wrap { text-align:center; padding:8px 0 16px; }
+.btn-submit { background:var(--gold); color:#fff; border:none; padding:14px 52px; font-size:1rem; font-family:'Arial',sans-serif; font-weight:700; letter-spacing:0.08em; border-radius:4px; cursor:pointer; text-transform:uppercase; box-shadow:0 2px 8px rgba(201,168,76,0.35); transition:background 0.2s; }
+.btn-submit:hover { background:#b8923f; }
+.btn-submit:disabled { opacity:0.6; cursor:not-allowed; }
+.submit-note { font-size:0.75rem; color:var(--lighter); margin-top:10px; font-style:italic; }
+.success-screen { display:none; text-align:center; padding:60px 24px; }
+.success-screen .checkmark { width:64px; height:64px; background:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 24px; font-size:2rem; color:#fff; }
+.success-screen h2 { font-size:1.6rem; color:var(--dark); margin-bottom:10px; }
+.success-screen p { color:var(--muted); font-size:0.92rem; max-width:400px; margin:0 auto; }
+.footer { text-align:center; padding:18px; font-size:0.75rem; color:var(--lighter); font-style:italic; border-top:1px solid var(--border); }
+
+@media (max-width:560px) {
+  .hrow.two, .hrow.three, .client-field-row.two, .client-field-row.three, .fee-grid, .sig-grid { grid-template-columns:1fr; }
+  .section, .host-card-body { padding:18px 16px; }
+  .header h1 { font-size:1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     HOST PREP PANEL
+══════════════════════════════════════════ -->
+<div id="hostPanel">
+  <div class="host-card">
+    <div class="host-card-header">
+      <h1>Prepare Client Contract</h1>
+      <p>Fill in what you know — client completes venue, times, and signature.</p>
+    </div>
+    <div class="host-card-body">
+
+      <div class="host-section-label">Client &amp; Event Info</div>
+      <div class="hrow two">
+        <div class="hf"><label>Client Name(s)</label><input type="text" id="h_client_names" placeholder="Full name(s)"/></div>
+        <div class="hf"><label>Primary Contact Phone</label><input type="text" id="h_client_phone" placeholder="(000) 000-0000"/></div>
+      </div>
+
+      <div class="host-section-label">Event Dates <span style="font-weight:400;color:var(--muted);font-size:0.75em;text-transform:none;letter-spacing:0">(add one per event)</span></div>
+      <div id="hostEventList"></div>
+      <button class="btn-add-event" onclick="addHostEvent()">+ Add Event Date</button>
+
+      <div class="host-section-label">Add-Ons</div>
+      <div class="host-cb-row"><input type="checkbox" id="h_addon_reels"/><label for="h_addon_reels">Behind-the-scenes / reels coordination</label></div>
+      <div class="host-cb-row"><input type="checkbox" id="h_addon_baraat"/><label for="h_addon_baraat">Baraat / procession hosting</label></div>
+      <div class="host-cb-row"><input type="checkbox" id="h_addon_multi"/><label for="h_addon_multi">Mehndi or multi-event coverage</label></div>
+      <div class="addon-other-row">
+        <input type="checkbox" id="h_addon_other_check"/>
+        <label for="h_addon_other_check">Other:</label>
+        <input type="text" id="h_addon_other_text" placeholder="Describe…"/>
+      </div>
+
+      <div class="host-section-label">Fees</div>
+      <div class="fee-grid">
+        <div class="hf"><label>Single Event Rate</label><input type="text" id="h_fee_single" placeholder="$0.00"/></div>
+        <div class="hf"><label>Add-Ons / Multi-Event</label><input type="text" id="h_fee_addons" placeholder="$0.00"/></div>
+        <div class="hf"><label>Retainer (due on signing)</label><input type="text" id="h_fee_retainer" placeholder="$0.00"/></div>
+        <div class="hf"><label>Remaining Balance</label><input type="text" id="h_fee_balance" placeholder="$0.00"/></div>
+        <div class="hf"><label>Total</label><input type="text" id="h_fee_total" placeholder="$0.00"/></div>
+      </div>
+      <p class="host-lock-note">Fees are locked for the client — read only.</p>
+
+      <button class="btn-generate" onclick="generateLink()">Generate Client Link →</button>
+      <div class="generated-link-box" id="generatedLinkBox">
+        <p>Share this link with your client. It opens the contract pre-filled with your details.</p>
+        <div class="link-copy-row">
+          <input type="text" id="generatedLinkInput" readonly/>
+          <button class="btn-copy" onclick="copyLink()">Copy</button>
+        </div>
+        <div class="copy-tip" id="copyTip">✓ Copied!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     CLIENT CONTRACT VIEW
+══════════════════════════════════════════ -->
+<div id="contractView">
+  <div class="header">
+    <h1>ABSAR NAJAM</h1>
+    <div class="tagline">MC &amp; Event Host</div>
+    <div class="contact">
+      (630) 550-7998 &nbsp;|&nbsp;
+      <a href="mailto:Najam.absar@gmail.com">Najam.absar@gmail.com</a> &nbsp;|&nbsp;
+      <a href="https://instagram.com/MC_Absar" target="_blank">@MC_Absar</a>
+    </div>
+  </div>
+
+  <div class="contract-title">
+    <h2>MC Services Agreement</h2>
+    <p>This contract is legally binding once signed by both parties.</p>
+  </div>
+
+  <div class="container" id="contractForm">
+
+    <!-- 1. Event Details -->
+    <div class="section">
+      <div class="section-title">1. Event Details</div>
+
+      <div class="client-field-row two" style="margin-bottom:18px;">
+        <div class="field-group">
+          <label>Client Name(s)</label>
+          <input type="text" id="client_names" placeholder="Full name(s)"/>
+        </div>
+        <div class="field-group">
+          <label>Primary Contact Phone</label>
+          <input type="text" id="client_phone" placeholder="(000) 000-0000"/>
+        </div>
+      </div>
+
+      <div class="sub-heading" style="margin-bottom:12px;">Event Date(s) &amp; Venue Info</div>
+      <div id="clientEventList"></div>
+      <button class="btn-add-client-event" onclick="addClientEvent()">+ Add Another Event Date</button>
+    </div>
+
+    <!-- 2. Scope -->
+    <div class="section">
+      <div class="section-title">2. Scope of Services</div>
+      <p class="clause">Absar Najam ("MC") agrees to provide the following services for the above event(s):</p>
+      <ul class="clause-list">
+        <li>Professional MC hosting for the reception program</li>
+        <li>Coordination with the DJ, photographer, and other vendors for seamless event flow</li>
+        <li>Scripted and spontaneous announcements, toasts, and program transitions</li>
+        <li>Two (2) pre-event consultations: one planning call and one final run-of-show review</li>
+        <li>Customized run-of-show document provided 7 days prior to each event</li>
+        <li>Cultural sensitivity &amp; bilingual announcement support (English / Urdu-Punjabi as needed)</li>
+      </ul>
+      <div class="sub-heading">Optional Add-Ons:</div>
+      <div class="checkbox-row"><input type="checkbox" id="addon_reels" disabled/><label>Behind-the-scenes content / social media reels coordination</label></div>
+      <div class="checkbox-row"><input type="checkbox" id="addon_baraat" disabled/><label>Baraat / procession hosting</label></div>
+      <div class="checkbox-row"><input type="checkbox" id="addon_multi" disabled/><label>Mehndi or multi-event coverage (see Section 4)</label></div>
+      <div class="checkbox-row"><input type="checkbox" id="addon_other_check" disabled/><label id="addon_other_label">Other add-on</label></div>
+    </div>
+
+    <!-- 3. Compensation -->
+    <div class="section">
+      <div class="section-title">3. Compensation</div>
+      <table class="fee-table">
+        <thead><tr><th>Service</th><th>Amount</th></tr></thead>
+        <tbody>
+          <tr><td>MC Services (Single Event)</td><td class="prefilled-cell" id="d_fee_single">—</td></tr>
+          <tr><td>Add-Ons / Multi-Event Package</td><td class="prefilled-cell" id="d_fee_addons">—</td></tr>
+          <tr><td><strong>Non-Refundable Retainer</strong> (due upon signing)</td><td class="prefilled-cell" id="d_fee_retainer">—</td></tr>
+          <tr><td>Remaining Balance (due 7 days before event)</td><td class="prefilled-cell" id="d_fee_balance">—</td></tr>
+          <tr class="total-row"><td>TOTAL</td><td id="d_fee_total">—</td></tr>
+        </tbody>
+      </table>
+      <p class="clause" style="font-size:0.82rem;color:var(--muted);">Payment methods: Cash &nbsp;|&nbsp; Zelle &nbsp;|&nbsp; Venmo &nbsp;|&nbsp; Check (payable to Absar Najam)</p>
+    </div>
+
+    <!-- 4. Multi-Event -->
+    <div class="section">
+      <div class="section-title">4. Multi-Event Packages</div>
+      <p class="clause">Clients booking multiple events (e.g., Mehndi + Reception, or Walima) receive a bundled rate. Individual event rates do not apply once a package is agreed upon. Package details and pricing are outlined in a separate addendum attached to this agreement.</p>
+    </div>
+
+    <!-- 5. Cancellation -->
+    <div class="section">
+      <div class="section-title">5. Cancellation &amp; Rescheduling Policy</div>
+      <div class="sub-heading">Cancellation by Client:</div>
+      <ul class="clause-list">
+        <li>More than 60 days before event: Retainer is forfeited; no additional fee.</li>
+        <li>31–60 days before event: 50% of total contract value is due.</li>
+        <li>30 days or fewer before event: 100% of total contract value is due.</li>
+      </ul>
+      <div class="sub-heading">Rescheduling by Client:</div>
+      <p class="clause">One (1) complimentary rescheduling allowed if the new date is available and notice is given at least 30 days in advance. Subsequent reschedules are subject to a $100 rescheduling fee.</p>
+      <div class="sub-heading">Cancellation by MC:</div>
+      <p class="clause">In the unlikely event the MC must cancel, a full refund of all payments received will be issued and the MC will make reasonable efforts to provide a qualified referral.</p>
+    </div>
+
+    <!-- 6. Client Responsibilities -->
+    <div class="section">
+      <div class="section-title">6. Client Responsibilities</div>
+      <ul class="clause-list">
+        <li>Provide a finalized run-of-show no later than 10 days before each event.</li>
+        <li>Ensure the MC has access to the venue at least 60 minutes before program start.</li>
+        <li>Provide meal service for the MC during the reception.</li>
+        <li>Provide a working microphone system (wired or wireless) through the venue or DJ.</li>
+        <li>Communicate any family-specific sensitivities, name pronunciations, or special requests in advance.</li>
+      </ul>
+    </div>
+
+    <!-- 7. Media -->
+    <div class="section">
+      <div class="section-title">7. Media &amp; Content Release</div>
+      <p class="clause">By signing this agreement, the Client grants the MC full permission to capture, use, and share behind-the-scenes content, highlight moments, and event footage for social media and promotional purposes. This release is a required condition of service and is non-negotiable.</p>
+      <div class="checkbox-row"><input type="checkbox" id="permit_vendor_tags"/><label for="permit_vendor_tags">Client permits tagging of venue and vendors in shared content.</label></div>
+    </div>
+
+    <!-- 8. Liability -->
+    <div class="section">
+      <div class="section-title">8. Limitation of Liability</div>
+      <p class="clause">The MC is not responsible for delays or program changes caused by other vendors, venue staff, or circumstances outside his control. The MC's total liability under this agreement shall not exceed the total fees paid.</p>
+    </div>
+
+    <!-- 9. Governing Law -->
+    <div class="section">
+      <div class="section-title">9. Governing Law</div>
+      <p class="clause">This agreement shall be governed by the laws of the State of Illinois. Any disputes shall be resolved in Cook or DuPage County, Illinois.</p>
+    </div>
+
+    <!-- 10. Entire Agreement -->
+    <div class="section">
+      <div class="section-title">10. Entire Agreement</div>
+      <p class="clause">This document, along with any signed addenda, constitutes the entire agreement between both parties. Any modifications must be agreed upon in writing and signed by both parties.</p>
+    </div>
+
+    <!-- Signatures -->
+    <div class="sig-section">
+      <div class="section-title">Signatures</div>
+      <p class="sig-intro">By signing below, both parties acknowledge they have read, understood, and agreed to all terms of this contract.</p>
+      <div class="sig-grid">
+        <div class="sig-block">
+          <h4>MC / Service Provider</h4>
+          <div class="sig-canvas-wrap" style="background:#f0f0ee;cursor:default;">
+            <div class="mc-prefilled">Absar Najam</div>
+          </div>
+          <div class="sig-date"><label>Date</label><input type="date" id="mc_date" readonly/></div>
+        </div>
+        <div class="sig-block">
+          <h4>Client</h4>
+          <div class="sig-canvas-wrap" id="clientSigWrap">
+            <canvas id="clientSigCanvas"></canvas>
+            <div class="sig-placeholder" id="sigPlaceholder">Sign here with finger or mouse</div>
+          </div>
+          <div class="sig-actions"><button class="btn-clear" onclick="clearSig()">Clear</button></div>
+          <div class="sig-date"><label>Date</label><input type="date" id="client_date"/></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="submit-wrap">
+      <button class="btn-submit" id="submitBtn" onclick="submitContract()">Submit Signed Contract</button>
+      <p class="submit-note">Submitting confirms your digital signature and agreement to all terms above.</p>
+    </div>
+  </div>
+
+  <div class="success-screen" id="successScreen">
+    <div class="checkmark">✓</div>
+    <h2>Contract Signed!</h2>
+    <p>Thank you. Your signed agreement has been recorded. Absar will be in touch shortly to begin planning your event.</p>
+  </div>
+
+  <div class="footer">Thank you for trusting me with your special day. Let's make it unforgettable. — Absar Najam</div>
+</div>
+
+<script>
+// ── EmailJS config ────────────────────────────────────────────────────────────
+const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';
+const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+
+const EVENT_TYPES = ['Wedding Reception','Mehndi','Nikkah','Walima','Baraat','Engagement','Other'];
+
+// ── Host: event block management ──────────────────────────────────────────────
+let hostEventCount = 0;
+function addHostEvent() {
+  hostEventCount++;
+  const idx = hostEventCount;
+  const div = document.createElement('div');
+  div.className = 'host-event-block';
+  div.id = `hev_${idx}`;
+  div.innerHTML = `
+    <div class="event-label">
+      Event ${idx}
+      <button class="btn-remove-event" onclick="removeHostEvent(${idx})" title="Remove">✕</button>
+    </div>
+    <div class="hrow two">
+      <div class="hf"><label>Event Type</label>
+        <select id="h_etype_${idx}">
+          ${EVENT_TYPES.map(t=>`<option>${t}</option>`).join('')}
+        </select>
+      </div>
+      <div class="hf"><label>Date</label><input type="date" id="h_edate_${idx}"/></div>
+    </div>`;
+  document.getElementById('hostEventList').appendChild(div);
+}
+function removeHostEvent(idx) {
+  const el = document.getElementById(`hev_${idx}`);
+  if (el) el.remove();
+}
+
+// Start with one event block
+addHostEvent();
+
+// ── Generate link ─────────────────────────────────────────────────────────────
+function generateLink() {
+  const base = window.location.href.split('?')[0];
+  const p = new URLSearchParams();
+  p.set('d','1');
+
+  const cn = document.getElementById('h_client_names')?.value || '';
+  const cp = document.getElementById('h_client_phone')?.value || '';
+  if (cn) p.set('client_names', cn);
+  if (cp) p.set('client_phone', cp);
+
+  // Collect events
+  const events = [];
+  document.querySelectorAll('.host-event-block').forEach(block => {
+    const id = block.id.replace('hev_','');
+    const etype = document.getElementById(`h_etype_${id}`)?.value || '';
+    const edate = document.getElementById(`h_edate_${id}`)?.value || '';
+    if (etype || edate) events.push({ etype, edate });
+  });
+  p.set('events', encodeURIComponent(JSON.stringify(events)));
+
+  ['addon_reels','addon_baraat','addon_multi','addon_other_check'].forEach(f => {
+    p.set(f, document.getElementById('h_'+f)?.checked ? '1' : '0');
+  });
+  const ot = document.getElementById('h_addon_other_text')?.value || '';
+  if (ot) p.set('addon_other_text', ot);
+
+  ['fee_single','fee_addons','fee_retainer','fee_balance','fee_total'].forEach(f => {
+    const v = document.getElementById('h_'+f)?.value || '';
+    if (v) p.set(f, v);
+  });
+
+  const url = base + '?' + p.toString();
+  document.getElementById('generatedLinkInput').value = url;
+  document.getElementById('generatedLinkBox').style.display = 'block';
+  document.getElementById('generatedLinkBox').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(document.getElementById('generatedLinkInput').value).then(() => {
+    const tip = document.getElementById('copyTip');
+    tip.style.display = 'block';
+    setTimeout(() => tip.style.display = 'none', 2500);
+  });
+}
+
+// ── Detect mode ───────────────────────────────────────────────────────────────
+const params = new URLSearchParams(window.location.search);
+const isClientMode = params.has('d');
+
+if (isClientMode) {
+  document.getElementById('hostPanel').style.display = 'none';
+  document.getElementById('contractView').style.display = 'block';
+  loadClientView(params);
+}
+
+// ── Client: load pre-filled data ──────────────────────────────────────────────
+let clientEventCount = 0;
+
+function addClientEvent(prefill = {}) {
+  clientEventCount++;
+  const idx = clientEventCount;
+  const div = document.createElement('div');
+  div.className = 'client-event-block';
+  div.id = `cev_${idx}`;
+
+  const typeName = prefill.etype || '';
+  div.innerHTML = `
+    <div class="event-badge">
+      ${typeName ? `<span class="event-badge-name">${typeName}</span>` : `Event ${idx}`}
+      ${clientEventCount > 1 ? `<button class="btn-remove-client-event" onclick="removeClientEvent(${idx})">✕ Remove</button>` : ''}
+    </div>
+    <div class="client-field-row two">
+      <div class="field-group">
+        <label>Event Type</label>
+        <input type="text" id="c_etype_${idx}" value="${typeName}" ${typeName ? 'readonly class="prefilled"' : 'placeholder="e.g. Wedding Reception"'}/>
+      </div>
+      <div class="field-group">
+        <label>Event Date</label>
+        <input type="date" id="c_edate_${idx}" value="${prefill.edate||''}" ${prefill.edate ? 'readonly class="prefilled"' : ''}/>
+      </div>
+    </div>
+    <div class="client-field-row full">
+      <div class="field-group">
+        <label>Venue Name</label>
+        <input type="text" id="c_venue_${idx}" placeholder="Venue name"/>
+      </div>
+    </div>
+    <div class="client-field-row full">
+      <div class="field-group">
+        <label>Venue Address</label>
+        <input type="text" id="c_addr_${idx}" placeholder="Full address"/>
+      </div>
+    </div>
+    <div class="client-field-row three">
+      <div class="field-group">
+        <label>Ceremony / Start Time</label>
+        <input type="time" id="c_start_${idx}"/>
+      </div>
+      <div class="field-group">
+        <label>Reception Start</label>
+        <input type="time" id="c_reception_${idx}"/>
+      </div>
+      <div class="field-group">
+        <label>Estimated End</label>
+        <input type="time" id="c_end_${idx}"/>
+      </div>
+    </div>`;
+
+  document.getElementById('clientEventList').appendChild(div);
+}
+
+function removeClientEvent(idx) {
+  const el = document.getElementById(`cev_${idx}`);
+  if (el) el.remove();
+}
+
+function loadClientView(p) {
+  // Client name / phone
+  const cn = p.get('client_names') || '';
+  const cp = p.get('client_phone') || '';
+  const cnEl = document.getElementById('client_names');
+  const cpEl = document.getElementById('client_phone');
+  if (cn && cnEl) { cnEl.value = cn; cnEl.classList.add('prefilled'); cnEl.readOnly = true; }
+  if (cp && cpEl) { cpEl.value = cp; cpEl.classList.add('prefilled'); cpEl.readOnly = true; }
+
+  // Events
+  try {
+    const events = JSON.parse(decodeURIComponent(p.get('events') || '[]'));
+    if (events.length > 0) {
+      events.forEach(ev => addClientEvent(ev));
+    } else {
+      addClientEvent();
+    }
+  } catch(e) { addClientEvent(); }
+
+  // Add-ons
+  ['addon_reels','addon_baraat','addon_multi','addon_other_check'].forEach(f => {
+    const el = document.getElementById(f);
+    if (el) el.checked = p.get(f) === '1';
+  });
+  const ot = p.get('addon_other_text');
+  if (ot) document.getElementById('addon_other_label').textContent = 'Other: ' + ot;
+
+  // Fees
+  ['fee_single','fee_addons','fee_retainer','fee_balance','fee_total'].forEach(f => {
+    const v = p.get(f);
+    const el = document.getElementById('d_' + f);
+    if (el) el.textContent = v || '—';
+  });
+
+  // MC date
+  document.getElementById('mc_date').value = new Date().toISOString().split('T')[0];
+}
+
+// ── Signature canvas ──────────────────────────────────────────────────────────
+const canvas = document.getElementById('clientSigCanvas');
+if (canvas) {
+  const ctx = canvas.getContext('2d');
+  const wrap = document.getElementById('clientSigWrap');
+  const placeholder = document.getElementById('sigPlaceholder');
+  let drawing = false, hasSig = false;
+
+  function resizeCanvas() {
+    const rect = wrap.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = 130 * dpr;
+    ctx.scale(dpr, dpr);
+    ctx.strokeStyle = '#1A1A2E';
+    ctx.lineWidth = 2.2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  function getPos(e) {
+    const r = canvas.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return { x: src.clientX - r.left, y: src.clientY - r.top };
+  }
+  function startDraw(e) { e.preventDefault(); drawing=true; hasSig=true; placeholder.style.display='none'; const p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); }
+  function draw(e) { if(!drawing) return; e.preventDefault(); const p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); }
+  function endDraw() { drawing=false; }
+
+  canvas.addEventListener('mousedown', startDraw);
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', endDraw);
+  canvas.addEventListener('mouseleave', endDraw);
+  canvas.addEventListener('touchstart', startDraw, {passive:false});
+  canvas.addEventListener('touchmove', draw, {passive:false});
+  canvas.addEventListener('touchend', endDraw);
+
+  window.clearSig = () => {
+    const dpr = window.devicePixelRatio||1;
+    ctx.clearRect(0,0,canvas.width/dpr,canvas.height/dpr);
+    hasSig=false; placeholder.style.display='flex';
+  };
+
+  function fmtDate(d) { if(!d) return '—'; const [y,m,day]=d.split('-'); return `${m}/${day}/${y}`; }
+  function fmtTime(t) { if(!t) return '—'; const [h,mn]=t.split(':'); const hr=parseInt(h); return `${hr%12||12}:${mn} ${hr<12?'AM':'PM'}`; }
+
+  window.submitContract = async function() {
+    if (!hasSig) { alert('Please sign the contract before submitting.'); return; }
+    const clientDate = document.getElementById('client_date')?.value;
+    if (!clientDate) { alert('Please add your date in the signature block.'); return; }
+
+    const btn = document.getElementById('submitBtn');
+    btn.textContent = 'Sending…'; btn.disabled = true;
+
+    const p = new URLSearchParams(window.location.search);
+
+    // Collect client-entered event details
+    const eventSummaries = [];
+    document.querySelectorAll('.client-event-block').forEach(block => {
+      const id = block.id.replace('cev_','');
+      const etype   = document.getElementById(`c_etype_${id}`)?.value || '—';
+      const edate   = fmtDate(document.getElementById(`c_edate_${id}`)?.value || '');
+      const venue   = document.getElementById(`c_venue_${id}`)?.value || '—';
+      const addr    = document.getElementById(`c_addr_${id}`)?.value || '—';
+      const start   = fmtTime(document.getElementById(`c_start_${id}`)?.value || '');
+      const recep   = fmtTime(document.getElementById(`c_reception_${id}`)?.value || '');
+      const end     = fmtTime(document.getElementById(`c_end_${id}`)?.value || '');
+      eventSummaries.push(`${etype} | ${edate} | ${venue} (${addr}) | Start: ${start} | Reception: ${recep} | End: ${end}`);
+    });
+
+    const addons = [];
+    if (p.get('addon_reels')==='1') addons.push('Reels/BTS');
+    if (p.get('addon_baraat')==='1') addons.push('Baraat');
+    if (p.get('addon_multi')==='1') addons.push('Multi-event');
+    const ot = p.get('addon_other_text');
+    if (p.get('addon_other_check')==='1' && ot) addons.push(ot);
+
+    const templateParams = {
+      client_names:    p.get('client_names') || document.getElementById('client_names')?.value || '—',
+      client_phone:    p.get('client_phone') || document.getElementById('client_phone')?.value || '—',
+      events_summary:  eventSummaries.join('\n'),
+      addons:          addons.length ? addons.join(', ') : 'None',
+      fee_single:      p.get('fee_single') || '—',
+      fee_addons:      p.get('fee_addons') || '—',
+      fee_retainer:    p.get('fee_retainer') || '—',
+      fee_balance:     p.get('fee_balance') || '—',
+      fee_total:       p.get('fee_total') || '—',
+      vendor_tags:     document.getElementById('permit_vendor_tags')?.checked ? 'Yes' : 'No',
+      client_date:     fmtDate(clientDate),
+      submitted_at:    new Date().toLocaleString('en-US', {timeZone:'America/Chicago'}),
+      signature_image: canvas.toDataURL('image/png'),
+    };
+
+    try {
+      emailjs.init(EMAILJS_PUBLIC_KEY);
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+    } catch(err) { console.warn('EmailJS:', err); }
+
+    document.getElementById('contractForm').style.display = 'none';
+    document.getElementById('successScreen').style.display = 'block';
+    window.scrollTo({top:0, behavior:'smooth'});
+  };
+}
+</script>
+</body>
+</html>
