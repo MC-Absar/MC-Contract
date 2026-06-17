@@ -543,6 +543,10 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
       <div class="section-title" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot required"></span>Electronic Agreement &amp; Acknowledgment</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body">
       <p class="sig-intro">By typing your full legal name below and submitting this form, you acknowledge that you have read, understood, and agreed to all terms of this contract. You agree that your typed name constitutes a legally binding electronic signature under the Illinois Electronic Commerce Security Act (5 ILCS 175) and the federal Electronic Signatures in Global and National Commerce Act (E-SIGN).</p>
+      <div class="checkbox-row" style="background:#fdecea;border:1px solid #f5c6c6;border-radius:4px;padding:10px 14px;margin-bottom:16px;">
+        <input type="checkbox" id="retainer_confirm"/>
+        <label for="retainer_confirm"><strong>I understand that the non-refundable retainer is due immediately upon submitting this contract.</strong> Failure to submit payment does not cancel this agreement or release me from its terms.</label>
+      </div>
       <div class="sig-grid">
         <div class="sig-block">
           <h4>MC / Service Provider</h4>
@@ -870,6 +874,7 @@ window.submitContract = async function() {
   // Required checkboxes
   if (!document.getElementById('media_release_agree')?.checked) { alert('You must acknowledge and agree to the Media & Content Release (Section 7) to submit this contract.'); return; }
   if (!document.getElementById('review_acknowledge')?.checked) { alert('Please confirm you have read the Review & Referral Request (Section 17) to proceed.'); return; }
+  if (!document.getElementById('retainer_confirm')?.checked) { alert('Please confirm you understand the retainer is due immediately upon signing.'); return; }
 
   const sigName = document.getElementById('client_sig_name')?.value?.trim();
   if (!sigName) { alert('Please type your full legal name to agree to this contract.'); return; }
