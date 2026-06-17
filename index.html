@@ -452,6 +452,7 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
       <div class="section-title">17. Review &amp; Referral Request</div>
       <p class="clause">The MC kindly requests that satisfied Clients consider sharing an honest review or testimonial via Instagram DM or text message to be featured on <strong>@MC_Absar</strong> on Instagram. Reviews and testimonials help support a small business and are deeply appreciated. There is no obligation to do so, and this request has no bearing on the services provided.</p>
       <p class="clause">If the Client refers another couple or client who books the MC's services, the referring Client will receive a $50 credit toward any future booking as a thank-you gesture.</p>
+      <div class="checkbox-row"><input type="checkbox" id="review_acknowledge"/><label for="review_acknowledge"><strong>I have read and understood the Review &amp; Referral Request above.</strong> (Required to proceed)</label></div>
     </div>
 
     <!-- 18. Program Overtime -->
@@ -767,11 +768,32 @@ if (isClientMode) {
 
 // ── Submit contract ───────────────────────────────────────────────────────────
 window.submitContract = async function() {
+  // Required client info fields
+  const clientNamesVal = document.getElementById('client_names')?.value?.trim();
+  if (!clientNamesVal) { alert('Please enter the client name(s) in Section 1.'); return; }
+  const clientPhoneVal = document.getElementById('client_phone')?.value?.trim();
+  if (!clientPhoneVal) { alert('Please enter a primary contact phone number in Section 1.'); return; }
+  const clientEmailVal = document.getElementById('client_email')?.value?.trim();
+  if (!clientEmailVal) { alert('Please enter a client email address in Section 1.'); return; }
+
+  // Check event details — at least venue and date filled
+  const firstBlock = document.querySelector('.client-event-block');
+  if (firstBlock) {
+    const id = firstBlock.id.replace('cev_','');
+    const edateVal = document.getElementById(`c_edate_${id}`)?.value;
+    const venueVal = document.getElementById(`c_venue_${id}`)?.value?.trim();
+    if (!edateVal) { alert('Please enter the event date in Section 1.'); return; }
+    if (!venueVal) { alert('Please enter the venue name in Section 1.'); return; }
+  }
+
+  // Required checkboxes
+  if (!document.getElementById('media_release_agree')?.checked) { alert('You must acknowledge and agree to the Media & Content Release (Section 7) to submit this contract.'); return; }
+  if (!document.getElementById('review_acknowledge')?.checked) { alert('Please confirm you have read the Review & Referral Request (Section 17) to proceed.'); return; }
+
   const sigName = document.getElementById('client_sig_name')?.value?.trim();
   if (!sigName) { alert('Please type your full legal name to agree to this contract.'); return; }
   const clientDate = document.getElementById('client_date')?.value;
   if (!clientDate) { alert('Please enter the date in the signature block.'); return; }
-  if (!document.getElementById('media_release_agree')?.checked) { alert('You must acknowledge and agree to the Media & Content Release (Section 7) to submit this contract.'); return; }
 
   const btn = document.getElementById('submitBtn');
   btn.textContent = 'Sending…'; btn.disabled = true;
