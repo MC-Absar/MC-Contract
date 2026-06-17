@@ -825,10 +825,6 @@ function generateLink() {
     p.set(f, v || '—');
   });
 
-  // Add 30-day expiry timestamp
-  const expiresAt = Date.now() + (30 * 24 * 60 * 60 * 1000);
-  p.set('expires', expiresAt.toString());
-
   const url = base + '?' + p.toString();
   document.getElementById('generatedLinkInput').value = url;
   document.getElementById('generatedLinkBox').style.display = 'block';
@@ -977,43 +973,6 @@ function loadClientView(p) {
 if (isClientMode) {
   document.getElementById('hostPanel').style.display = 'none';
   document.getElementById('contractView').style.display = 'block';
-
-  // Check link expiry
-  const expiresParam = params.get('expires');
-  if (expiresParam) {
-    const expiresAt = parseInt(expiresParam);
-    const now = Date.now();
-    const daysLeft = Math.ceil((expiresAt - now) / (1000 * 60 * 60 * 24));
-    if (now > expiresAt) {
-      // Link expired — show expiry screen
-      document.getElementById('contractView').innerHTML = `
-        <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#1A1A2E;padding:24px;">
-          <div style="background:#fff;border-radius:8px;max-width:480px;width:100%;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.35);">
-            <div style="background:#1A1A2E;padding:28px 32px;border-bottom:3px solid #C9A84C;text-align:center;">
-              <div style="width:64px;height:64px;border-radius:50%;border:2px solid #C9A84C;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;background:rgba(201,168,76,0.1);">
-                <span style="font-family:Georgia,serif;font-size:0.85rem;font-weight:700;color:#C9A84C;text-transform:uppercase;line-height:1.2;">MC<br/>Absar</span>
-              </div>
-              <h1 style="color:#fff;font-family:Georgia,serif;font-size:1.4rem;letter-spacing:0.06em;margin:0;">ABSAR NAJAM</h1>
-              <p style="color:#aaa;font-size:0.8rem;font-style:italic;margin-top:4px;font-family:Arial,sans-serif;">MC &amp; Event Host</p>
-            </div>
-            <div style="padding:36px 32px;text-align:center;">
-              <div style="font-size:2.5rem;margin-bottom:16px;">⏰</div>
-              <h2 style="font-family:Georgia,serif;font-size:1.3rem;color:#1A1A2E;margin-bottom:12px;">Contract Link Expired</h2>
-              <p style="font-family:Georgia,serif;font-size:0.9rem;color:#666;line-height:1.65;margin-bottom:24px;">This contract link has expired. Contract offers are valid for 30 days from the date they are sent. Please contact Absar to request a new link.</p>
-              <a href="mailto:Najam.absar@gmail.com" style="display:inline-block;background:#C9A84C;color:#fff;font-family:Arial,sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:0.08em;text-transform:uppercase;padding:12px 28px;border-radius:4px;text-decoration:none;">Contact Absar</a>
-              <p style="margin-top:16px;font-family:Arial,sans-serif;font-size:0.75rem;color:#999;">(630) 550-7998 &nbsp;|&nbsp; @MC_Absar</p>
-            </div>
-          </div>
-        </div>`;
-      return;
-    } else if (daysLeft <= 7) {
-      // Warning banner if 7 days or less left
-      const warning = document.createElement('div');
-      warning.style.cssText = 'background:#fff3cd;border-bottom:3px solid #C9A84C;padding:12px 20px;text-align:center;font-family:Arial,sans-serif;font-size:0.82rem;color:#856404;';
-      warning.innerHTML = `⚠️ <strong>This contract link expires in ${daysLeft} day${daysLeft === 1 ? '' : 's'}.</strong> Please complete and submit before it expires.`;
-      document.getElementById('contractView').insertBefore(warning, document.getElementById('contractView').firstChild);
-    }
-  }
 
   loadClientView(params);
 }
