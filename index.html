@@ -310,7 +310,8 @@ ul.clause-list li { margin-bottom:5px; line-height:1.55; }
     <div class="section">
       <div class="section-title">7. Media &amp; Content Release</div>
       <p class="clause">By signing this agreement, the Client grants the MC full permission to capture, use, and share behind-the-scenes content, highlight moments, and event footage for social media and promotional purposes. This release is a required condition of service and is non-negotiable.</p>
-      <div class="checkbox-row"><input type="checkbox" id="permit_vendor_tags"/><label for="permit_vendor_tags">Client permits tagging of venue and vendors in shared content.</label></div>
+      <div class="checkbox-row"><input type="checkbox" id="media_release_agree"/><label for="media_release_agree"><strong>I acknowledge and agree to the Media &amp; Content Release above.</strong> (Required)</label></div>
+      <div class="checkbox-row"><input type="checkbox" id="permit_vendor_tags"/><label for="permit_vendor_tags">Client also permits tagging of venue and vendors in shared content. (Optional)</label></div>
     </div>
 
     <!-- 8. Liability -->
@@ -401,7 +402,7 @@ const EMAILJS_PUBLIC_KEY  = 'fht2-kw4VKBW7XNc1';
 const EMAILJS_SERVICE_ID  = 'service_vs453nz';
 const EMAILJS_TEMPLATE_ID = 'template_y44pcjs';
 
-const EVENT_TYPES = ['Wedding Reception','Mehndi','Nikkah','Walima','Baraat','Engagement','Other'];
+const EVENT_TYPES = ['Wedding Reception','Mehndi','Nikkah','Walima','Shalima','Baraat','Engagement','Other'];
 
 function fmtDate(d) { if(!d) return '—'; const [y,m,day]=d.split('-'); return `${m}/${day}/${y}`; }
 function fmtTime(t) { if(!t) return '—'; const [h,mn]=t.split(':'); const hr=parseInt(h); return `${hr%12||12}:${mn} ${hr<12?'AM':'PM'}`; }
@@ -527,17 +528,13 @@ function addClientEvent(prefill = {}) {
         <input type="text" id="c_addr_${idx}" placeholder="Full address"/>
       </div>
     </div>
-    <div class="client-field-row three">
+    <div class="client-field-row two">
       <div class="field-group">
-        <label>Ceremony / Start Time</label>
+        <label>Event Start Time</label>
         <input type="time" id="c_start_${idx}"/>
       </div>
       <div class="field-group">
-        <label>Reception Start</label>
-        <input type="time" id="c_reception_${idx}"/>
-      </div>
-      <div class="field-group">
-        <label>Estimated End</label>
+        <label>Estimated End Time</label>
         <input type="time" id="c_end_${idx}"/>
       </div>
     </div>`;
@@ -627,6 +624,7 @@ window.submitContract = async function() {
   if (!sigName) { alert('Please type your full legal name to agree to this contract.'); return; }
   const clientDate = document.getElementById('client_date')?.value;
   if (!clientDate) { alert('Please enter the date in the signature block.'); return; }
+  if (!document.getElementById('media_release_agree')?.checked) { alert('You must acknowledge and agree to the Media & Content Release (Section 7) to submit this contract.'); return; }
 
   const btn = document.getElementById('submitBtn');
   btn.textContent = 'Sending…'; btn.disabled = true;
@@ -651,9 +649,8 @@ window.submitContract = async function() {
     const venue = document.getElementById(`c_venue_${id}`)?.value || '—';
     const addr  = document.getElementById(`c_addr_${id}`)?.value || '—';
     const start = fmtTime(document.getElementById(`c_start_${id}`)?.value || '');
-    const recep = fmtTime(document.getElementById(`c_reception_${id}`)?.value || '');
     const end   = fmtTime(document.getElementById(`c_end_${id}`)?.value || '');
-    eventLines.push(`${etype} — ${edate}\nVenue: ${venue}, ${addr}\nStart: ${start} | Reception: ${recep} | End: ${end}`);
+    eventLines.push(`${etype} — ${edate}\nVenue: ${venue}, ${addr}\nStart: ${start} | End: ${end}`);
   });
 
   const addons = [];
@@ -674,6 +671,7 @@ window.submitContract = async function() {
     fee_balance:    rawMap['fee_balance'] || '—',
     fee_total:      rawMap['fee_total'] || '—',
     vendor_tags:    document.getElementById('permit_vendor_tags')?.checked ? 'Yes' : 'No',
+    media_release:  'Agreed',
     client_sig:     sigName,
     client_date:    fmtDate(clientDate),
     mc_date:        fmtDate(new Date().toISOString().split('T')[0]),
