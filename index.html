@@ -428,7 +428,7 @@ function generateLink() {
     const edate = document.getElementById(`h_edate_${id}`)?.value || '';
     if (etype || edate) events.push({ etype, edate });
   });
-  p.set('events', encodeURIComponent(JSON.stringify(events)));
+  p.set('events', JSON.stringify(events));
 
   ['addon_reels','addon_baraat','addon_multi','addon_other_check'].forEach(f => {
     p.set(f, document.getElementById('h_'+f)?.checked ? '1' : '0');
@@ -438,7 +438,7 @@ function generateLink() {
 
   ['fee_single','fee_addons','fee_retainer','fee_balance','fee_total'].forEach(f => {
     const v = document.getElementById('h_'+f)?.value.trim() || '';
-    p.set(f, encodeURIComponent(v || '—'));
+    p.set(f, v || '—');
   });
 
   const url = base + '?' + p.toString();
@@ -537,7 +537,7 @@ function loadClientView(p) {
 
   // Events
   try {
-    const events = JSON.parse(decodeURIComponent(p.get('events') || '[]'));
+    const events = JSON.parse(p.get('events') || '[]');
     if (events.length > 0) {
       events.forEach(ev => addClientEvent(ev));
     } else {
@@ -555,8 +555,7 @@ function loadClientView(p) {
 
   // Fees
   ['fee_single','fee_addons','fee_retainer','fee_balance','fee_total'].forEach(f => {
-    const raw = p.get(f);
-    const v = raw ? decodeURIComponent(raw) : '—';
+    const v = p.get(f) || '—';
     const el = document.getElementById('d_' + f);
     if (el) el.textContent = v;
   });
