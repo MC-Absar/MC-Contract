@@ -1366,6 +1366,12 @@ window.submitContract = async function() {
   if (sticky) sticky.style.display = 'none';
   const bar = document.getElementById('progressBar');
   if (bar) bar.style.display = 'none';
+  const welcome = document.getElementById('welcomeBanner');
+  if (welcome) welcome.style.display = 'none';
+  // Disable submit permanently to prevent resubmission
+  const submitBtn = document.getElementById('submitBtn');
+  if (submitBtn) { submitBtn.disabled = true; submitBtn.onclick = null; }
+  window.submitContract = function() { return; };
   window.scrollTo({top:0, behavior:'smooth'});
 };
 </script>
