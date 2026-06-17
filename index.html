@@ -476,6 +476,8 @@ function addClientEvent(prefill = {}) {
   div.id = `cev_${idx}`;
 
   const typeName = prefill.etype || '';
+  const dateVal  = prefill.edate || '';
+
   div.innerHTML = `
     <div class="event-badge">
       ${typeName ? `<span class="event-badge-name">${typeName}</span>` : `Event ${idx}`}
@@ -484,11 +486,11 @@ function addClientEvent(prefill = {}) {
     <div class="client-field-row two">
       <div class="field-group">
         <label>Event Type</label>
-        <input type="text" id="c_etype_${idx}" value="${typeName}" ${typeName ? 'readonly class="prefilled"' : 'placeholder="e.g. Wedding Reception"'}/>
+        <input type="text" id="c_etype_${idx}" placeholder="e.g. Wedding Reception"/>
       </div>
       <div class="field-group">
         <label>Event Date</label>
-        <input type="date" id="c_edate_${idx}" value="${prefill.edate||''}" ${prefill.edate ? 'readonly class="prefilled"' : ''}/>
+        <input type="date" id="c_edate_${idx}"/>
       </div>
     </div>
     <div class="client-field-row full">
@@ -519,6 +521,20 @@ function addClientEvent(prefill = {}) {
     </div>`;
 
   document.getElementById('clientEventList').appendChild(div);
+
+  // Set values via JS after DOM insertion — Safari requires this for date inputs
+  if (typeName) {
+    const etypeEl = document.getElementById(`c_etype_${idx}`);
+    etypeEl.value = typeName;
+    etypeEl.readOnly = true;
+    etypeEl.classList.add('prefilled');
+  }
+  if (dateVal) {
+    const edateEl = document.getElementById(`c_edate_${idx}`);
+    edateEl.value = dateVal;
+    edateEl.readOnly = true;
+    edateEl.classList.add('prefilled');
+  }
 }
 
 function removeClientEvent(idx) {
