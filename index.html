@@ -226,16 +226,8 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
 }
 @keyframes shimmer { 0%{left:-100%} 100%{left:200%} }
 
-/* ── Section fade-in on scroll ── */
-.section, .sig-section {
-  opacity:0;
-  transform:translateY(18px);
-  transition:opacity 0.5s ease, transform 0.5s ease;
-}
-.section.visible, .sig-section.visible {
-  opacity:1;
-  transform:translateY(0);
-}
+/* ── Section fade-in removed for performance ── */
+.section, .sig-section { opacity:1; transform:none; }
 
 /* ── Welcome banner ── */
 #welcomeBanner {
@@ -1106,22 +1098,7 @@ if (isClientMode) {
   }
 })();
 
-// ── Fade-in sections on scroll ────────────────────────────────────────────────
-(function() {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        observer.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.08 });
-
-  document.querySelectorAll('.section, .sig-section').forEach((el, i) => {
-    el.style.transitionDelay = `${i * 0.04}s`;
-    observer.observe(el);
-  });
-})();
+// ── Fade-in removed for mobile performance ────────────────────────────────────
 
 // ── Section completion checkmarks ─────────────────────────────────────────────
 (function() {
@@ -1363,7 +1340,7 @@ window.submitContract = async function() {
   document.getElementById('contractForm').style.display = 'none';
   document.getElementById('successScreen').style.display = 'block';
   const sticky = document.getElementById('stickySubmit');
-  if (sticky) sticky.style.display = 'none';
+  if (sticky) { sticky.style.display = 'none'; sticky.remove(); }
   const bar = document.getElementById('progressBar');
   if (bar) bar.style.display = 'none';
   const welcome = document.getElementById('welcomeBanner');
