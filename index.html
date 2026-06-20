@@ -332,18 +332,35 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
         <input type="text" id="h_addon_other_text" placeholder="Describe…"/>
       </div>
 
-      <div class="host-section-label">Quote Builder</div>
+      <div class="host-section-label">💰 Quote Builder</div>
+      <p style="font-family:'Inter',sans-serif;font-size:0.78rem;color:var(--muted);margin-bottom:16px;line-height:1.6;">Fill in your rates below — totals calculate automatically.</p>
       <div class="fee-grid">
-        <div class="hf"><label>Single Event Rate</label><input type="number" id="h_fee_single" placeholder="0.00" oninput="calcFees()"/></div>
-        <div class="hf"><label>Additional Event Rate (per event)</label><input type="number" id="h_fee_addons" placeholder="0.00" oninput="calcFees()"/></div>
-        <div class="hf"><label># of Additional Events</label><input type="number" id="h_fee_num_events" placeholder="0" oninput="calcFees()"/></div>
-        <div class="hf"><label>Travel Fee</label><input type="number" id="h_fee_travel" placeholder="0.00" oninput="calcFees()"/></div>
+        <div class="hf">
+          <label>Your Rate for This Event</label>
+          <p style="font-size:0.68rem;color:var(--muted);font-family:'Inter',sans-serif;margin-bottom:4px;">Base price you're charging the client</p>
+          <input type="number" id="h_fee_single" placeholder="e.g. 700" oninput="calcFees()"/>
+        </div>
+        <div class="hf">
+          <label>Rate Per Extra Event</label>
+          <p style="font-size:0.68rem;color:var(--muted);font-family:'Inter',sans-serif;margin-bottom:4px;">If covering multiple events (Mehndi, Walima, etc.)</p>
+          <input type="number" id="h_fee_addons" placeholder="e.g. 500 (or leave 0)" oninput="calcFees()"/>
+        </div>
+        <div class="hf">
+          <label>How Many Extra Events?</label>
+          <p style="font-size:0.68rem;color:var(--muted);font-family:'Inter',sans-serif;margin-bottom:4px;">Number of events beyond the first</p>
+          <input type="number" id="h_fee_num_events" placeholder="e.g. 1 (or leave 0)" oninput="calcFees()"/>
+        </div>
+        <div class="hf">
+          <label>Travel Fee</label>
+          <p style="font-size:0.68rem;color:var(--muted);font-family:'Inter',sans-serif;margin-bottom:4px;">Leave 0 if event is local</p>
+          <input type="number" id="h_fee_travel" placeholder="e.g. 75 (or leave 0)" oninput="calcFees()"/>
+        </div>
       </div>
       <div style="background:var(--field-bg);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:14px;">
         <table style="width:100%;font-family:'Inter',sans-serif;font-size:0.88rem;border-collapse:collapse;">
           <tr><td style="padding:5px 0;color:var(--muted);">Single Event</td><td style="text-align:right;color:var(--body);" id="calc_single">$0.00</td></tr>
           <tr><td style="padding:5px 0;color:var(--muted);">Additional Events</td><td style="text-align:right;color:var(--body);" id="calc_addons">$0.00</td></tr>
-          <tr><td style="padding:5px 0;color:var(--muted);">Travel Fee</td><td style="text-align:right;color:var(--body);" id="calc_travel">$0.00</td></tr>
+          <tr id="calc_travel_row"><td style="padding:5px 0;color:var(--muted);">Travel Fee</td><td style="text-align:right;color:var(--body);" id="calc_travel">$0.00</td></tr>
           <tr><td colspan="2"><div style="border-top:1px solid var(--border);margin:6px 0;"></div></td></tr>
           <tr><td style="padding:5px 0;color:var(--muted);">Subtotal</td><td style="text-align:right;color:var(--body);" id="calc_subtotal">$0.00</td></tr>
           <tr id="discount_row" style="display:none;"><td style="padding:5px 0;color:var(--green);">Discount</td><td style="text-align:right;color:var(--green);" id="calc_discount_display">-$0.00</td></tr>
@@ -352,12 +369,28 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
         </table>
       </div>
       <div class="fee-grid">
-        <div class="hf"><label>Discount ($)</label><input type="number" id="h_fee_discount" placeholder="0.00" oninput="calcFees()"/></div>
-        <div class="hf"><label>Retainer (due on signing)</label><input type="number" id="h_fee_retainer" placeholder="0.00" oninput="calcFees()"/></div>
+        <div class="hf">
+          <label>Discount Amount</label>
+          <p style="font-size:0.68rem;color:var(--muted);font-family:'Inter',sans-serif;margin-bottom:4px;">Leave 0 if no discount</p>
+          <input type="number" id="h_fee_discount" placeholder="e.g. 50 (or leave 0)" oninput="calcFees()"/>
+        </div>
+        <div class="hf">
+          <label>Retainer to Collect Now</label>
+          <p style="font-size:0.68rem;color:var(--muted);font-family:'Inter',sans-serif;margin-bottom:4px;">Amount client pays immediately to secure date</p>
+          <input type="number" id="h_fee_retainer" placeholder="e.g. 200" oninput="calcFees()"/>
+        </div>
       </div>
       <div class="fee-grid" style="margin-top:8px;">
-        <div class="hf"><label>Balance Remaining</label><input type="text" id="h_fee_balance" placeholder="$0.00" readonly style="color:var(--muted);cursor:default;"/></div>
-        <div class="hf"><label>Total</label><input type="text" id="h_fee_total" placeholder="$0.00" readonly style="color:var(--dark);font-weight:700;cursor:default;"/></div>
+        <div class="hf">
+          <label>Balance Remaining <span style="font-size:0.65rem;background:#e8f4e8;color:#2d7a2d;border-radius:3px;padding:1px 5px;font-weight:700;">AUTO</span></label>
+          <p style="font-size:0.68rem;color:var(--muted);font-family:'Inter',sans-serif;margin-bottom:4px;">What client still owes after retainer</p>
+          <input type="text" id="h_fee_balance" placeholder="$0.00" readonly style="color:var(--muted);cursor:default;"/>
+        </div>
+        <div class="hf">
+          <label>Total <span style="font-size:0.65rem;background:#e8f4e8;color:#2d7a2d;border-radius:3px;padding:1px 5px;font-weight:700;">AUTO</span></label>
+          <p style="font-size:0.68rem;color:var(--muted);font-family:'Inter',sans-serif;margin-bottom:4px;">Full amount client owes</p>
+          <input type="text" id="h_fee_total" placeholder="$0.00" readonly style="color:var(--dark);font-weight:700;cursor:default;"/>
+        </div>
       </div>
       <p class="host-lock-note">Fees are locked for the client — read only.</p>
 
@@ -532,15 +565,15 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
         <tbody>
           <tr><td>MC Services (Single Event)</td><td class="prefilled-cell" id="d_fee_single">—</td></tr>
           <tr><td>Additional Event Rate (per event)</td><td class="prefilled-cell" id="d_fee_addons">—</td></tr>
-          <tr><td>Travel Fee</td><td class="prefilled-cell" id="d_fee_travel">—</td></tr>
+          <tr id="d_travel_row"><td>Travel Fee</td><td class="prefilled-cell" id="d_fee_travel">—</td></tr>
           <tr id="d_discount_row" style="display:none;"><td style="color:var(--green);font-weight:600;">Discount Applied 🎉</td><td class="prefilled-cell" id="d_fee_discount" style="color:var(--green);font-weight:600;">—</td></tr>
           <tr class="total-row"><td>TOTAL</td><td id="d_fee_total">—</td></tr>
           <tr><td><strong>Non-Refundable Retainer</strong> (due upon signing)</td><td class="prefilled-cell" id="d_fee_retainer">—</td></tr>
           <tr><td>Remaining Balance (due 7 days before event)</td><td class="prefilled-cell" id="d_fee_balance">—</td></tr>
         </tbody>
       </table>
-      <p style="margin:8px 0 0;font-family:'Inter',sans-serif;font-size:0.78rem;color:var(--muted);font-style:italic;">Payment: Cash | Zelle (Najam.absar@gmail.com or 630-550-7998)</p>
-      <p class="clause" style="font-size:0.82rem;color:var(--muted);">Payment methods: Cash &nbsp;|&nbsp; Zelle &nbsp;|&nbsp; Venmo &nbsp;|&nbsp; Check (payable to Absar Najam)</p>
+
+      
     </div>
       </div>
     <!-- 4. Multi-Event -->
@@ -1154,25 +1187,41 @@ function loadClientView(p) {
   const ot = rawMap['addon_other_text'];
   if (ot) document.getElementById('addon_other_label').textContent = 'Other: ' + ot;
 
-  // Fees — display all including discount and travel
-  ['fee_single','fee_addons','fee_retainer','fee_balance','fee_total','fee_discount','fee_travel'].forEach(f => {
-    const v = rawMap[f] || '—';
-    const el = document.getElementById('d_' + f);
-    if (el) el.textContent = v;
-  });
-  
+  // Fees — parse and calculate on client side to avoid NaN
+  const fSingle   = parseFloat((rawMap['fee_single']   || '0').replace(/[$,]/g,'')) || 0;
+  const fAddons   = parseFloat((rawMap['fee_addons']   || '0').replace(/[$,]/g,'')) || 0;
+  const fTravel   = parseFloat((rawMap['fee_travel']   || '0').replace(/[$,]/g,'')) || 0;
+  const fDiscount = parseFloat((rawMap['fee_discount'] || '0').replace(/[$,]/g,'')) || 0;
+  const fRetainer = parseFloat((rawMap['fee_retainer'] || '0').replace(/[$,]/g,'')) || 0;
+  const fTotal    = parseFloat((rawMap['fee_total']    || '0').replace(/[$,]/g,'')) || 0;
+  const fBalance  = parseFloat((rawMap['fee_balance']  || '0').replace(/[$,]/g,'')) || 0;
+  const fmt = v => v > 0 ? '$' + v.toFixed(2) : '—';
+
+  const setFee = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  setFee('d_fee_single',   fmt(fSingle));
+  setFee('d_fee_addons',   fmt(fAddons));
+  setFee('d_fee_travel',   fmt(fTravel));
+  setFee('d_fee_retainer', fmt(fRetainer));
+  setFee('d_fee_balance',  fBalance > 0 ? '$' + fBalance.toFixed(2) : '—');
+  setFee('d_fee_total',    fTotal > 0 ? '$' + fTotal.toFixed(2) : '—');
+
   // Show/hide discount row
-  const discountVal = rawMap['fee_discount'] || '0';
   const discRow = document.getElementById('d_discount_row');
   if (discRow) {
-    const hasDiscount = parseFloat(discountVal.replace('$','')) > 0;
-    discRow.style.display = hasDiscount ? 'table-row' : 'none';
+    discRow.style.display = fDiscount > 0 ? 'table-row' : 'none';
     const discEl = document.getElementById('d_fee_discount');
-    if (discEl && hasDiscount) discEl.textContent = '-' + discountVal;
+    if (discEl) discEl.textContent = fDiscount > 0 ? '-$' + fDiscount.toFixed(2) : '';
   }
 
-  // MC date
-  document.getElementById('mc_date').value = new Date().toISOString().split('T')[0];
+  // Show/hide travel row
+  const travRow = document.getElementById('d_travel_row');
+  if (travRow) travRow.style.display = fTravel > 0 ? 'table-row' : 'none';
+
+  // MC date + auto-fill client signing date to today
+  const todayStr = new Date().toISOString().split('T')[0];
+  document.getElementById('mc_date').value = todayStr;
+  const clientDateEl = document.getElementById('client_date');
+  if (clientDateEl && !clientDateEl.value) clientDateEl.value = todayStr;
 }
 
 // ── Activate client mode now that all functions are defined ───────────────────
@@ -1596,8 +1645,11 @@ window.submitContract = async function() {
     client_date:    fmtDate(clientDate),
     mc_date:        fmtDate(new Date().toISOString().split('T')[0]),
     submitted_at:   new Date().toLocaleString('en-US', {timeZone:'America/Chicago'}),
-    fee_discount:   (parseFloat((rawMap['fee_discount'] || '0').replace('$','')) > 0) ? (rawMap['fee_discount'] || '') : '',
-    fee_travel:     (parseFloat((rawMap['fee_travel'] || '0').replace('$','')) > 0) ? (rawMap['fee_travel'] || '') : '',
+    fee_discount:   rawMap['fee_discount'] || '0',
+    fee_discount_label: (parseFloat((rawMap['fee_discount'] || '0').replace(/[$,]/g,'')) > 0) ? 'Discount Applied 🎉' : '',
+    fee_discount_display: (parseFloat((rawMap['fee_discount'] || '0').replace(/[$,]/g,'')) > 0) ? '-' + (rawMap['fee_discount'] || '') : '',
+    fee_travel:     rawMap['fee_travel'] || '—',
+    fee_travel_display: (parseFloat((rawMap['fee_travel'] || '0').replace(/[$,]/g,'')) > 0) ? (rawMap['fee_travel'] || '—') : 'N/A',
     client_email:   document.getElementById('client_email')?.value?.trim() || '—',
     secondary_contact: (document.getElementById('secondary_contact_name')?.value?.trim() || '') + (document.getElementById('secondary_contact_relation')?.value ? ' (' + document.getElementById('secondary_contact_relation').value + ')' : '') + (document.getElementById('secondary_contact_phone')?.value?.trim() ? ' — ' + document.getElementById('secondary_contact_phone').value.trim() : '') || 'None',
     planner_name:   document.getElementById('planner_name')?.value?.trim() || 'None',
