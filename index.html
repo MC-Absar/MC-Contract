@@ -207,6 +207,30 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
 /* ── Spin animation ── */
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ── Floating Next button ── */
+#floatingNext {
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
+  z-index: 200;
+  display: none;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 14px 24px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(201,168,76,0.5);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+#floatingNext:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(201,168,76,0.6); }
+#floatingNext.complete { background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); box-shadow: 0 4px 20px rgba(22,163,74,0.4); }
+
 /* ── Gold scrollbar ── */
 ::-webkit-scrollbar { width:6px; }
 ::-webkit-scrollbar-track { background:var(--bg); }
@@ -308,13 +332,32 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
         <input type="text" id="h_addon_other_text" placeholder="Describe…"/>
       </div>
 
-      <div class="host-section-label">Fees</div>
+      <div class="host-section-label">Quote Builder</div>
       <div class="fee-grid">
-        <div class="hf"><label>Single Event Rate</label><input type="text" id="h_fee_single" placeholder="$0.00"/></div>
-        <div class="hf"><label>Add-Ons / Multi-Event</label><input type="text" id="h_fee_addons" placeholder="$0.00"/></div>
-        <div class="hf"><label>Retainer (due on signing)</label><input type="text" id="h_fee_retainer" placeholder="$0.00"/></div>
-        <div class="hf"><label>Remaining Balance</label><input type="text" id="h_fee_balance" placeholder="$0.00"/></div>
-        <div class="hf"><label>Total</label><input type="text" id="h_fee_total" placeholder="$0.00"/></div>
+        <div class="hf"><label>Single Event Rate</label><input type="number" id="h_fee_single" placeholder="0.00" oninput="calcFees()"/></div>
+        <div class="hf"><label>Additional Event Rate (per event)</label><input type="number" id="h_fee_addons" placeholder="0.00" oninput="calcFees()"/></div>
+        <div class="hf"><label># of Additional Events</label><input type="number" id="h_fee_num_events" placeholder="0" oninput="calcFees()"/></div>
+        <div class="hf"><label>Travel Fee</label><input type="number" id="h_fee_travel" placeholder="0.00" oninput="calcFees()"/></div>
+      </div>
+      <div style="background:var(--field-bg);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:14px;">
+        <table style="width:100%;font-family:'Inter',sans-serif;font-size:0.88rem;border-collapse:collapse;">
+          <tr><td style="padding:5px 0;color:var(--muted);">Single Event</td><td style="text-align:right;color:var(--body);" id="calc_single">$0.00</td></tr>
+          <tr><td style="padding:5px 0;color:var(--muted);">Additional Events</td><td style="text-align:right;color:var(--body);" id="calc_addons">$0.00</td></tr>
+          <tr><td style="padding:5px 0;color:var(--muted);">Travel Fee</td><td style="text-align:right;color:var(--body);" id="calc_travel">$0.00</td></tr>
+          <tr><td colspan="2"><div style="border-top:1px solid var(--border);margin:6px 0;"></div></td></tr>
+          <tr><td style="padding:5px 0;color:var(--muted);">Subtotal</td><td style="text-align:right;color:var(--body);" id="calc_subtotal">$0.00</td></tr>
+          <tr id="discount_row" style="display:none;"><td style="padding:5px 0;color:var(--green);">Discount</td><td style="text-align:right;color:var(--green);" id="calc_discount_display">-$0.00</td></tr>
+          <tr><td colspan="2"><div style="border-top:2px solid var(--gold);margin:6px 0;"></div></td></tr>
+          <tr><td style="padding:5px 0;font-weight:700;color:var(--dark);">Total</td><td style="text-align:right;font-weight:700;color:var(--dark);font-size:1rem;" id="calc_total">$0.00</td></tr>
+        </table>
+      </div>
+      <div class="fee-grid">
+        <div class="hf"><label>Discount ($)</label><input type="number" id="h_fee_discount" placeholder="0.00" oninput="calcFees()"/></div>
+        <div class="hf"><label>Retainer (due on signing)</label><input type="number" id="h_fee_retainer" placeholder="0.00" oninput="calcFees()"/></div>
+      </div>
+      <div class="fee-grid" style="margin-top:8px;">
+        <div class="hf"><label>Balance Remaining</label><input type="text" id="h_fee_balance" placeholder="$0.00" readonly style="color:var(--muted);cursor:default;"/></div>
+        <div class="hf"><label>Total</label><input type="text" id="h_fee_total" placeholder="$0.00" readonly style="color:var(--dark);font-weight:700;cursor:default;"/></div>
       </div>
       <p class="host-lock-note">Fees are locked for the client — read only.</p>
 
@@ -372,6 +415,8 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
   <div id="welcomeBanner">
     <p>Welcome, <span id="welcomeName">valued client</span>! Please review your agreement carefully before signing.</p>
   </div>
+
+  <button id="floatingNext" onclick="goToNextAction()">Start ›</button>
 
   <div id="progressBar">
     <div class="progress-inner">
@@ -486,12 +531,15 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
         <thead><tr><th>Service</th><th>Amount</th></tr></thead>
         <tbody>
           <tr><td>MC Services (Single Event)</td><td class="prefilled-cell" id="d_fee_single">—</td></tr>
-          <tr><td>Add-Ons / Multi-Event Package</td><td class="prefilled-cell" id="d_fee_addons">—</td></tr>
+          <tr><td>Additional Event Rate (per event)</td><td class="prefilled-cell" id="d_fee_addons">—</td></tr>
+          <tr><td>Travel Fee</td><td class="prefilled-cell" id="d_fee_travel">—</td></tr>
+          <tr id="d_discount_row" style="display:none;"><td style="color:var(--green);font-weight:600;">Discount Applied 🎉</td><td class="prefilled-cell" id="d_fee_discount" style="color:var(--green);font-weight:600;">—</td></tr>
+          <tr class="total-row"><td>TOTAL</td><td id="d_fee_total">—</td></tr>
           <tr><td><strong>Non-Refundable Retainer</strong> (due upon signing)</td><td class="prefilled-cell" id="d_fee_retainer">—</td></tr>
           <tr><td>Remaining Balance (due 7 days before event)</td><td class="prefilled-cell" id="d_fee_balance">—</td></tr>
-          <tr class="total-row"><td>TOTAL</td><td id="d_fee_total">—</td></tr>
         </tbody>
       </table>
+      <p style="margin:8px 0 0;font-family:'Inter',sans-serif;font-size:0.78rem;color:var(--muted);font-style:italic;">Payment: Cash | Zelle (Najam.absar@gmail.com or 630-550-7998)</p>
       <p class="clause" style="font-size:0.82rem;color:var(--muted);">Payment methods: Cash &nbsp;|&nbsp; Zelle &nbsp;|&nbsp; Venmo &nbsp;|&nbsp; Check (payable to Absar Najam)</p>
     </div>
       </div>
@@ -545,7 +593,6 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
       <div class="section-title" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot required"></span>📸 7. Media &amp; Content Release</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body">
       <p class="clause">By signing this agreement, the Client grants the MC permission to capture, use, and share behind-the-scenes content, highlight moments, and event footage for social media and promotional purposes. Clients who prefer limited sharing may discuss specific content restrictions with the MC prior to signing. Any agreed-upon restrictions must be documented in writing as an addendum to this agreement.</p>
-      <div class="checkbox-row"><input type="checkbox" id="media_release_agree"/><label for="media_release_agree"><strong>I acknowledge and agree to the Media &amp; Content Release above.</strong> (Required)</label></div>
       <div class="checkbox-row"><input type="checkbox" id="permit_vendor_tags"/><label for="permit_vendor_tags">Client also permits tagging of venue and vendors in shared content. <span style="font-size:0.65rem;background:#e8f4e8;color:#2d7a2d;border-radius:3px;padding:1px 5px;font-family:Arial,sans-serif;font-weight:700;letter-spacing:0.04em;">OPTIONAL</span></label></div>
     </div>
       </div>
@@ -704,7 +751,11 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
       <div class="section-body">
       <p class="clause">The MC kindly requests that satisfied Clients consider sharing an honest review or testimonial via Instagram DM or text message to be featured on <strong>@MC_Absar</strong> on Instagram. Reviews and testimonials help support a small business and are deeply appreciated. There is no obligation to do so, and this request has no bearing on the services provided.</p>
       <p class="clause">If the Client refers another couple or client who books the MC's services, the referring Client will receive a $50 credit toward any future booking as a thank-you gesture.</p>
-      <div class="checkbox-row"><input type="checkbox" id="review_acknowledge"/><label for="review_acknowledge"><strong>I have read and understood Section 24 — Review &amp; Referral Request above.</strong> (Required to proceed)</label></div>
+      <div class="checkbox-row" style="margin-top:14px;background:var(--field-bg);border:1px solid var(--border);border-radius:6px;padding:12px 14px;">
+        <input type="checkbox" id="review_acknowledge"/>
+        <label for="review_acknowledge"><strong>I have read and understood the Review &amp; Referral Request above.</strong> <span style="font-size:0.65rem;background:#fdecea;color:#c0392b;border-radius:3px;padding:1px 5px;font-family:Arial,sans-serif;font-weight:700;letter-spacing:0.04em;">REQUIRED</span></label>
+      </div>
+
       </div>
     </div>
 
@@ -713,10 +764,11 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
       <div class="section-title" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot required"></span>✍️ Electronic Agreement &amp; Acknowledgment</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body">
       <p class="sig-intro">By typing your full legal name below and submitting this form, you acknowledge that you have read, understood, and agreed to all terms of this contract. You agree that your typed name constitutes a legally binding electronic signature under the Illinois Electronic Commerce Security Act (5 ILCS 175) and the federal Electronic Signatures in Global and National Commerce Act (E-SIGN).</p>
-      <div class="checkbox-row" style="background:#fdecea;border:1px solid #f5c6c6;border-radius:4px;padding:10px 14px;margin-bottom:16px;">
+      <div class="checkbox-row" style="background:#fdecea;border:1px solid #f5c6c6;border-radius:6px;padding:12px 14px;margin-bottom:16px;">
         <input type="checkbox" id="retainer_confirm"/>
-        <label for="retainer_confirm"><strong>I understand that the non-refundable retainer is due immediately upon submitting this contract.</strong> Failure to submit payment does not cancel this agreement or release me from its terms.</label>
+        <label for="retainer_confirm"><strong>I understand the non-refundable retainer is due immediately upon submitting this contract.</strong> Failure to submit payment does not cancel this agreement or release me from its terms. <span style="font-size:0.65rem;background:#c0392b;color:#fff;border-radius:3px;padding:1px 5px;font-family:Arial,sans-serif;font-weight:700;letter-spacing:0.04em;">REQUIRED</span></label>
       </div>
+
       <div class="sig-grid">
         <div class="sig-block">
           <h4>MC / Service Provider</h4>
@@ -783,18 +835,13 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
         <tr>
           <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;">
             <span style="font-family:Arial,sans-serif;font-size:0.75rem;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:0.05em;">Zelle</span><br/>
-            <span style="font-family:Georgia,serif;font-size:0.95rem;color:#1A1A2E;">Najam.absar@gmail.com</span>
+            <span style="font-family:Georgia,serif;font-size:0.95rem;color:#1A1A2E;">Najam.absar@gmail.com</span><br/>
+            <span style="font-family:Georgia,serif;font-size:0.95rem;color:#1A1A2E;">630-550-7998</span>
           </td>
         </tr>
         <tr>
           <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;">
-            <span style="font-family:Arial,sans-serif;font-size:0.75rem;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:0.05em;">Venmo</span><br/>
-            <span style="font-family:Georgia,serif;font-size:0.95rem;color:#1A1A2E;">@abstarnajam</span>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;">
-            <span style="font-family:Arial,sans-serif;font-size:0.75rem;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:0.05em;">Cash / Check</span><br/>
+            <span style="font-family:Arial,sans-serif;font-size:0.75rem;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:0.05em;">Cash</span><br/>
             <span style="font-family:Georgia,serif;font-size:0.95rem;color:#1A1A2E;">Payable to Absar Najam</span>
           </td>
         </tr>
@@ -862,6 +909,10 @@ function addHostEvent() {
         </select>
       </div>
       <div class="hf"><label>Date</label><input type="date" id="h_edate_${idx}"/></div>
+    </div>
+    <div class="hrow two">
+      <div class="hf"><label>Venue Name</label><input type="text" id="h_venue_${idx}" placeholder="Venue name"/></div>
+      <div class="hf"><label>Guest Count</label><input type="number" id="h_guests_${idx}" placeholder="e.g. 200" min="1"/></div>
     </div>`;
   document.getElementById('hostEventList').appendChild(div);
 }
@@ -874,6 +925,40 @@ function removeHostEvent(idx) {
 addHostEvent();
 
 // ── Generate link ─────────────────────────────────────────────────────────────
+
+// ── Quote calculator ──────────────────────────────────────────────────────────
+function calcFees() {
+  const single   = parseFloat(document.getElementById('h_fee_single')?.value) || 0;
+  const addons   = parseFloat(document.getElementById('h_fee_addons')?.value) || 0;
+  const numEv    = parseFloat(document.getElementById('h_fee_num_events')?.value) || 0;
+  const travel   = parseFloat(document.getElementById('h_fee_travel')?.value) || 0;
+  const discount = parseFloat(document.getElementById('h_fee_discount')?.value) || 0;
+  const retainer = parseFloat(document.getElementById('h_fee_retainer')?.value) || 0;
+
+  const addonsTotal = addons * numEv;
+  const subtotal    = single + addonsTotal + travel;
+  const total       = Math.max(0, subtotal - discount);
+  const balance     = Math.max(0, total - retainer);
+
+  const fmt = v => '$' + v.toFixed(2);
+
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set('calc_single',   fmt(single));
+  set('calc_addons',   fmt(addonsTotal));
+  set('calc_travel',   fmt(travel));
+  set('calc_subtotal', fmt(subtotal));
+  set('calc_discount_display', '-' + fmt(discount));
+  set('calc_total',    fmt(total));
+
+  const discRow = document.getElementById('discount_row');
+  if (discRow) discRow.style.display = discount > 0 ? 'table-row' : 'none';
+
+  const totalEl   = document.getElementById('h_fee_total');
+  const balanceEl = document.getElementById('h_fee_balance');
+  if (totalEl)   totalEl.value   = fmt(total);
+  if (balanceEl) balanceEl.value = fmt(balance);
+}
+
 function generateLink() {
   const base = window.location.href.split('?')[0];
   const p = new URLSearchParams();
@@ -886,13 +971,15 @@ function generateLink() {
   if (cp) p.set('client_phone', cp);
   if (ce) p.set('client_email', ce);
 
-  // Collect events
+  // Collect events with venue + guest count
   const events = [];
   document.querySelectorAll('.host-event-block').forEach(block => {
     const id = block.id.replace('hev_','');
-    const etype = document.getElementById(`h_etype_${id}`)?.value || '';
-    const edate = document.getElementById(`h_edate_${id}`)?.value || '';
-    if (etype || edate) events.push({ etype, edate });
+    const etype  = document.getElementById(`h_etype_${id}`)?.value || '';
+    const edate  = document.getElementById(`h_edate_${id}`)?.value || '';
+    const venue  = document.getElementById(`h_venue_${id}`)?.value || '';
+    const guests = document.getElementById(`h_guests_${id}`)?.value || '';
+    if (etype || edate) events.push({ etype, edate, venue, guests });
   });
   p.set('events', JSON.stringify(events));
 
@@ -902,10 +989,23 @@ function generateLink() {
   const ot = document.getElementById('h_addon_other_text')?.value || '';
   if (ot) p.set('addon_other_text', ot);
 
-  ['fee_single','fee_addons','fee_retainer','fee_balance','fee_total'].forEach(f => {
-    const v = document.getElementById('h_'+f)?.value.trim() || '';
-    p.set(f, v || '—');
-  });
+  // Fees — use calculator values
+  const fSingle   = document.getElementById('h_fee_single')?.value || '0';
+  const fAddons   = document.getElementById('h_fee_addons')?.value || '0';
+  const fNumEv    = document.getElementById('h_fee_num_events')?.value || '0';
+  const fTravel   = document.getElementById('h_fee_travel')?.value || '0';
+  const fDiscount = document.getElementById('h_fee_discount')?.value || '0';
+  const fRetainer = document.getElementById('h_fee_retainer')?.value || '0';
+  const fTotal    = document.getElementById('h_fee_total')?.value || '0';
+  const fBalance  = document.getElementById('h_fee_balance')?.value || '0';
+  p.set('fee_single',   fSingle   ? `$${parseFloat(fSingle).toFixed(2)}`   : '—');
+  p.set('fee_addons',   fAddons   ? `$${parseFloat(fAddons).toFixed(2)}`   : '—');
+  p.set('fee_num_events', fNumEv || '0');
+  p.set('fee_travel',   fTravel   ? `$${parseFloat(fTravel).toFixed(2)}`   : '—');
+  p.set('fee_discount', fDiscount ? `$${parseFloat(fDiscount).toFixed(2)}` : '0');
+  p.set('fee_retainer', fRetainer ? `$${parseFloat(fRetainer).toFixed(2)}` : '—');
+  p.set('fee_total',    fTotal    ? `$${parseFloat(fTotal).toFixed(2)}`    : '—');
+  p.set('fee_balance',  fBalance  ? `$${parseFloat(fBalance).toFixed(2)}`  : '—');
 
   const url = base + '?' + p.toString();
   document.getElementById('generatedLinkInput').value = url;
@@ -935,8 +1035,11 @@ function addClientEvent(prefill = {}) {
   div.className = 'client-event-block';
   div.id = `cev_${idx}`;
 
-  const typeName = prefill.etype || '';
-  const dateVal  = prefill.edate || '';
+  const typeName  = prefill.etype   || '';
+  const dateVal   = prefill.edate   || '';
+  const venueName = prefill.venue   || '';
+  const guestNum  = prefill.guests  || '';
+  const isLocked  = typeName || dateVal || venueName || guestNum;
 
   div.innerHTML = `
     <div class="event-badge">
@@ -953,12 +1056,23 @@ function addClientEvent(prefill = {}) {
         <input type="date" id="c_edate_${idx}"/>
       </div>
     </div>
+    ${venueName ? `
+    <div class="client-field-row two">
+      <div class="field-group">
+        <label>Venue Name</label>
+        <input type="text" id="c_venue_${idx}" value="${venueName}" class="prefilled" readonly/>
+      </div>
+      <div class="field-group">
+        <label>Guest Count</label>
+        <input type="text" id="c_guests_${idx}" value="${guestNum || '—'}" class="prefilled" readonly/>
+      </div>
+    </div>` : `
     <div class="client-field-row full">
       <div class="field-group">
         <label>Venue Name <span style="font-size:0.65rem;background:#fdecea;color:#c0392b;border-radius:3px;padding:1px 5px;font-family:Arial,sans-serif;font-weight:700;letter-spacing:0.04em;">REQUIRED</span></label>
         <input type="text" id="c_venue_${idx}" placeholder="Venue name"/>
       </div>
-    </div>
+    </div>`}
     <div class="client-field-row full">
       <div class="field-group">
         <label>Venue Address <span style="font-size:0.65rem;background:#fdecea;color:#c0392b;border-radius:3px;padding:1px 5px;font-family:Arial,sans-serif;font-weight:700;letter-spacing:0.04em;">REQUIRED</span></label>
@@ -1040,12 +1154,22 @@ function loadClientView(p) {
   const ot = rawMap['addon_other_text'];
   if (ot) document.getElementById('addon_other_label').textContent = 'Other: ' + ot;
 
-  // Fees
-  ['fee_single','fee_addons','fee_retainer','fee_balance','fee_total'].forEach(f => {
+  // Fees — display all including discount and travel
+  ['fee_single','fee_addons','fee_retainer','fee_balance','fee_total','fee_discount','fee_travel'].forEach(f => {
     const v = rawMap[f] || '—';
     const el = document.getElementById('d_' + f);
     if (el) el.textContent = v;
   });
+  
+  // Show/hide discount row
+  const discountVal = rawMap['fee_discount'] || '0';
+  const discRow = document.getElementById('d_discount_row');
+  if (discRow) {
+    const hasDiscount = parseFloat(discountVal.replace('$','')) > 0;
+    discRow.style.display = hasDiscount ? 'table-row' : 'none';
+    const discEl = document.getElementById('d_fee_discount');
+    if (discEl && hasDiscount) discEl.textContent = '-' + discountVal;
+  }
 
   // MC date
   document.getElementById('mc_date').value = new Date().toISOString().split('T')[0];
@@ -1160,6 +1284,151 @@ if (isClientMode) {
   document.addEventListener('change', e => checkSection(e.target));
 })();
 
+
+// ── Floating Next Button ──────────────────────────────────────────────────────
+(function() {
+  const btn = document.getElementById('floatingNext');
+  if (!btn) return;
+  btn.style.display = 'block';
+
+  // All required actions in order
+  function getActions() {
+    const actions = [];
+
+    // Client info fields (only if editable)
+    ['client_names','client_phone','client_email'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && !el.readOnly) actions.push({ el, type:'input' });
+    });
+
+    // Secondary contact
+    ['secondary_contact_name','secondary_contact_relation'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) actions.push({ el, type:'input' });
+    });
+
+    // Per-event required fields
+    document.querySelectorAll('.client-event-block').forEach(block => {
+      const id = block.id.replace('cev_','');
+      ['c_addr_','c_start_','c_end_'].forEach(prefix => {
+        const el = document.getElementById(prefix + id);
+        if (el && !el.readOnly) actions.push({ el, type:'input' });
+      });
+    });
+
+    // Checkboxes
+    ['review_acknowledge','retainer_confirm','read_all_sections'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) actions.push({ el, type:'checkbox' });
+    });
+
+    // Signature fields
+    ['client_sig_name','client_date'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) actions.push({ el, type:'input' });
+    });
+
+    return actions;
+  }
+
+  function isComplete(action) {
+    if (action.type === 'checkbox') return action.el.checked;
+    return action.el.value.trim() !== '';
+  }
+
+  function openParentSection(el) {
+    const section = el.closest('.section, .sig-section');
+    if (!section) return;
+    const title = section.querySelector('.section-title');
+    const body = section.querySelector('.section-body');
+    if (title?.classList.contains('collapsed')) {
+      title.classList.remove('collapsed');
+      body?.classList.remove('collapsed');
+    }
+  }
+
+  window.goToNextAction = function() {
+    const actions = getActions();
+    const incomplete = actions.filter(a => !isComplete(a));
+
+    if (incomplete.length === 0) {
+      // All done — scroll to submit
+      const submit = document.getElementById('submitBtn');
+      if (submit) {
+        submit.scrollIntoView({ behavior:'smooth', block:'center' });
+        btn.textContent = 'Ready to Submit ✓';
+        btn.classList.add('complete');
+      }
+      return;
+    }
+
+    const next = incomplete[0];
+    openParentSection(next.el);
+    next.el.scrollIntoView({ behavior:'smooth', block:'center' });
+    setTimeout(() => next.el.focus(), 400);
+
+    // Update button label
+    const remaining = incomplete.length;
+    if (remaining === 1) {
+      btn.textContent = 'Last Step ›';
+    } else if (remaining <= 3) {
+      btn.textContent = 'Almost done ›';
+    } else {
+      btn.textContent = `Next › (${remaining} left)`;
+    }
+  };
+
+  // Update button label on any input/change
+  document.addEventListener('input', () => {
+    const actions = getActions();
+    const remaining = actions.filter(a => !isComplete(a)).length;
+    if (remaining === 0) {
+      btn.textContent = 'Ready to Submit ✓';
+      btn.classList.add('complete');
+    } else if (remaining <= 1) {
+      btn.textContent = 'Last Step ›';
+      btn.classList.remove('complete');
+    } else if (remaining <= 3) {
+      btn.textContent = 'Almost done ›';
+      btn.classList.remove('complete');
+    } else {
+      btn.textContent = `Next › (${remaining} left)`;
+      btn.classList.remove('complete');
+    }
+  });
+  document.addEventListener('change', () => {
+    const actions = getActions();
+    const remaining = actions.filter(a => !isComplete(a)).length;
+    if (remaining === 0) {
+      btn.textContent = 'Ready to Submit ✓';
+      btn.classList.add('complete');
+    } else if (remaining <= 3) {
+      btn.textContent = 'Almost done ›';
+      btn.classList.remove('complete');
+    } else {
+      btn.textContent = `Next › (${remaining} left)`;
+      btn.classList.remove('complete');
+    }
+  });
+
+  // Hide after submission
+  const origSubmit = window.submitContract;
+  const observer = new MutationObserver(() => {
+    if (document.getElementById('successScreen')?.style.display === 'block') {
+      btn.style.display = 'none';
+    }
+  });
+  const ss = document.getElementById('successScreen');
+  if (ss) observer.observe(ss, { attributes: true, attributeFilter: ['style'] });
+
+  // Initialize label
+  setTimeout(() => {
+    const actions = getActions();
+    const remaining = actions.filter(a => !isComplete(a)).length;
+    btn.textContent = remaining > 0 ? `Start › (${remaining} steps)` : 'Ready to Submit ✓';
+  }, 500);
+})();
+
 // ── Collapsible sections ─────────────────────────────────────────────────────
 function toggleSection(titleEl) {
   titleEl.classList.toggle('collapsed');
@@ -1241,17 +1510,16 @@ window.submitContract = async function() {
   if (!secRelEl?.value?.trim()) { fieldError(secRelEl, 'Please select the relationship of your secondary contact in Section 1.'); return; }
 
   // Required checkboxes
-  if (!document.getElementById('media_release_agree')?.checked) {
-    const el = document.getElementById('media_release_agree');
-    el?.closest('.section')?.querySelector('.section-title.collapsed')?.click();
-    el?.scrollIntoView({ behavior:'smooth', block:'center' });
-    alert('You must acknowledge and agree to the Media & Content Release (Section 7) to submit this contract.'); return;
-  }
   if (!document.getElementById('review_acknowledge')?.checked) {
-    const el = document.getElementById('review_acknowledge');
-    el?.closest('.section')?.querySelector('.section-title.collapsed')?.click();
-    el?.scrollIntoView({ behavior:'smooth', block:'center' });
-    alert('Please confirm you have read the Review & Referral Request (Section 17) to proceed.'); return;
+    const revEl = document.getElementById('review_acknowledge');
+    const revSection = revEl?.closest('.section');
+    if (revSection) {
+      const title = revSection.querySelector('.section-title');
+      const body = revSection.querySelector('.section-body');
+      if (title?.classList.contains('collapsed')) { title.classList.remove('collapsed'); body?.classList.remove('collapsed'); }
+    }
+    revEl?.scrollIntoView({ behavior:'smooth', block:'center' });
+    alert('Please confirm you have read the Review & Referral section before submitting.'); return;
   }
   if (!document.getElementById('retainer_confirm')?.checked) {
     document.getElementById('retainer_confirm')?.scrollIntoView({ behavior:'smooth', block:'center' });
@@ -1259,7 +1527,7 @@ window.submitContract = async function() {
   }
   if (!document.getElementById('read_all_sections')?.checked) {
     document.getElementById('read_all_sections')?.scrollIntoView({ behavior:'smooth', block:'center' });
-    alert('Please confirm you have read and understood all sections of this contract.'); return;
+    alert('Please confirm you have read and understood all sections of this contract before submitting.'); return;
   }
 
   const sigNameEl = document.getElementById('client_sig_name');
@@ -1328,6 +1596,8 @@ window.submitContract = async function() {
     client_date:    fmtDate(clientDate),
     mc_date:        fmtDate(new Date().toISOString().split('T')[0]),
     submitted_at:   new Date().toLocaleString('en-US', {timeZone:'America/Chicago'}),
+    fee_discount:   rawMap['fee_discount'] || '0',
+    fee_travel:     rawMap['fee_travel'] || '—',
     client_email:   document.getElementById('client_email')?.value?.trim() || '—',
     secondary_contact: (document.getElementById('secondary_contact_name')?.value?.trim() || '') + (document.getElementById('secondary_contact_relation')?.value ? ' (' + document.getElementById('secondary_contact_relation').value + ')' : '') + (document.getElementById('secondary_contact_phone')?.value?.trim() ? ' — ' + document.getElementById('secondary_contact_phone').value.trim() : '') || 'None',
     planner_name:   document.getElementById('planner_name')?.value?.trim() || 'None',
@@ -1338,13 +1608,60 @@ window.submitContract = async function() {
     to_email:       document.getElementById('client_email')?.value?.trim() || '',
   };
 
+  // Build Google Calendar link
+  const firstBlock = document.querySelector('.client-event-block');
+  let calDate = '', calEndDate = '', calTitle = '', calDetails = '';
+  if (firstBlock) {
+    const fid = firstBlock.id.replace('cev_','');
+    const evDate  = document.getElementById(`c_edate_${fid}`)?.value || '';
+    const evStart = document.getElementById(`c_start_${fid}`)?.value || '17:00';
+    const evEnd   = document.getElementById(`c_end_${fid}`)?.value || '22:00';
+    const evType  = document.getElementById(`c_etype_${fid}`)?.value || 'Event';
+    const evVenue = document.getElementById(`c_venue_${fid}`)?.value || rawMap['events'] ? JSON.parse(rawMap['events']||'[]')[0]?.venue || '' : '';
+    const evAddr  = document.getElementById(`c_addr_${fid}`)?.value || '';
+    const cName   = rawMap['client_names'] || '—';
+    
+    if (evDate) {
+      const startDT = evDate.replace(/-/g,'') + 'T' + evStart.replace(':','') + '00';
+      const endDT   = evDate.replace(/-/g,'') + 'T' + evEnd.replace(':','') + '00';
+      calDate    = startDT;
+      calEndDate = endDT;
+      calTitle   = encodeURIComponent(`${cName} - ${evType}`);
+      calDetails = encodeURIComponent(
+        `Client: ${cName}\n` +
+        `Phone: ${rawMap['client_phone']||'—'}\n` +
+        `Email: ${rawMap['client_email']||'—'}\n` +
+        `Venue: ${evVenue}${evAddr ? ', ' + evAddr : ''}\n` +
+        `Guests: ${rawMap['events'] ? JSON.parse(rawMap['events']||'[]')[0]?.guests||'—' : '—'}\n` +
+        `---\n` +
+        `Total: ${rawMap['fee_total']||'—'}\n` +
+        `Retainer: ${rawMap['fee_retainer']||'—'}\n` +
+        `Balance: ${rawMap['fee_balance']||'—'}\n` +
+        `Discount: ${rawMap['fee_discount']||'0'}\n` +
+        `---\n` +
+        `Planner: ${document.getElementById('planner_name')?.value||'N/A'}\n` +
+        `Secondary Contact: ${document.getElementById('secondary_contact_name')?.value||'N/A'}`
+      );
+    }
+  }
+  const calLocation = encodeURIComponent(
+    (document.querySelector('[id^="c_addr_"]')?.value || '')
+  );
+  const calLink = calDate 
+    ? `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${calTitle}&dates=${calDate}/${calEndDate}&details=${calDetails}&location=${calLocation}`
+    : '';
+  templateParams.google_cal_link = calLink;
+
   try {
     emailjs.init(EMAILJS_PUBLIC_KEY);
     // Send to Absar
-    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
-    // Send confirmation copy to client
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      ...templateParams,
+      to_email: 'najam.absar@gmail.com',
+    });
+    // Send one copy to client
     const clientEmail = document.getElementById('client_email')?.value?.trim();
-    if (clientEmail) {
+    if (clientEmail && clientEmail !== 'najam.absar@gmail.com') {
       await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
         ...templateParams,
         to_email: clientEmail,
