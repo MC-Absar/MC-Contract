@@ -135,31 +135,13 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
 .checkbox-row input[type=checkbox] { margin-top:3px; accent-color:var(--gold); width:17px; height:17px; flex-shrink:0; }
 
 /* ── Signatures ── */
-.sig-section { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:28px; margin-bottom:18px; }
-.sig-intro { font-size:0.85rem; color:var(--muted); font-style:italic; margin-bottom:24px; }
-.sig-grid { display:grid; grid-template-columns:1fr 1fr; gap:28px; }
-.sig-block h4 { font-family:'Arial',sans-serif; font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--dark); margin-bottom:10px; }
-.sig-canvas-wrap { border:1.5px solid var(--border); border-radius:4px; background:var(--field-bg); position:relative; overflow:hidden; }
-.sig-canvas-wrap canvas { display:block; width:100%; height:130px; cursor:crosshair; touch-action:none; }
-.sig-actions { display:flex; justify-content:flex-end; margin-top:4px; }
-.btn-clear { background:none; border:none; font-size:0.75rem; color:var(--lighter); cursor:pointer; padding:2px 4px; font-family:'Arial',sans-serif; }
-.btn-clear:hover { color:var(--red); }
-.sig-placeholder { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; color:#ccc; font-size:0.8rem; font-style:italic; font-family:'Arial',sans-serif; }
-.sig-date { margin-top:12px; }
-.sig-date label { font-family:'Arial',sans-serif; font-size:0.72rem; font-weight:700; color:var(--muted); letter-spacing:0.05em; text-transform:uppercase; display:block; margin-bottom:4px; }
-.sig-date input { border:none; border-bottom:1.5px solid var(--border); background:transparent; font-size:0.9rem; font-family:'Georgia',serif; padding:4px 2px; width:100%; outline:none; }
-.sig-date input:focus { border-bottom-color:var(--gold); }
-.mc-prefilled { display:flex; align-items:center; justify-content:center; height:130px; font-family:'Georgia',serif; font-size:1.6rem; color:var(--dark); font-style:italic; opacity:0.55; }
 .submit-wrap { text-align:center; padding:12px 0 20px; }
 .btn-submit { background:linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color:#fff; border:none; padding:16px 56px; font-size:0.95rem; font-family:'Inter',sans-serif; font-weight:700; letter-spacing:0.1em; border-radius:8px; cursor:pointer; text-transform:uppercase; box-shadow:0 4px 20px rgba(201,168,76,0.4); transition:all 0.2s; }
 .btn-submit:hover { transform:translateY(-1px); box-shadow:0 6px 28px rgba(201,168,76,0.5); }
 .btn-submit:active { transform:translateY(0); }
 .btn-submit:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
 .submit-note { font-size:0.75rem; color:var(--lighter); margin-top:10px; font-style:italic; font-family:'Inter',sans-serif; }
-.success-screen { display:none; text-align:center; padding:60px 24px; }
-.success-screen .checkmark { width:64px; height:64px; background:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 24px; font-size:2rem; color:#fff; }
-.success-screen h2 { font-size:1.6rem; color:var(--dark); margin-bottom:10px; }
-.success-screen p { color:var(--muted); font-size:0.92rem; max-width:400px; margin:0 auto; }
+
 .footer { text-align:center; padding:20px; font-size:0.78rem; color:var(--lighter); font-style:italic; border-top:1px solid var(--border); font-family:'Inter',sans-serif; letter-spacing:0.02em; }
 
 /* ── Progress bar ── */
@@ -625,7 +607,7 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
     <div class="section">
       <div class="section-title" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot required"></span>📸 7. Media &amp; Content Release</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body">
-      <p class="clause">By signing this agreement, the Client grants the MC permission to capture, use, and share behind-the-scenes content, highlight moments, and event footage for social media and promotional purposes. Clients who prefer limited sharing may discuss specific content restrictions with the MC prior to signing. Any agreed-upon restrictions must be documented in writing as an addendum to this agreement.</p>
+      <p class="clause">By signing this agreement, the Client grants the MC permission to capture and share event content for his own promotional and social media purposes. The MC will make every effort to focus on the atmosphere, décor, and performance rather than the bride and groom directly, though full exclusion cannot be guaranteed. Clients with specific content preferences may discuss restrictions with the MC prior to signing. Any agreed-upon restrictions must be documented in writing as an addendum to this agreement.</p>
       <div class="checkbox-row"><input type="checkbox" id="permit_vendor_tags"/><label for="permit_vendor_tags">Client also permits tagging of venue and vendors in shared content. <span style="font-size:0.65rem;background:#e8f4e8;color:#2d7a2d;border-radius:3px;padding:1px 5px;font-family:Arial,sans-serif;font-weight:700;letter-spacing:0.04em;">OPTIONAL</span></label></div>
     </div>
       </div>
@@ -691,7 +673,7 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
         <li>If the balance remains unpaid 24 hours before the event, the MC reserves the right to withhold services until payment is received in full.</li>
         <li>Failure to pay does not entitle the Client to a refund of the retainer.</li>
       </ul>
-      <p class="clause">Payment methods accepted: Cash &nbsp;|&nbsp; Zelle &nbsp;|&nbsp; Venmo &nbsp;|&nbsp; Check (payable to Absar Najam). All payments are final and non-reversible once processed.</p>
+      <p class="clause">Payment methods accepted: Cash &nbsp;|&nbsp; Zelle (Najam.absar@gmail.com or 630-550-7998). All payments are final and non-reversible once processed.</p>
     </div>
       </div>
     <!-- 14. Travel & Distance Fee -->
@@ -734,7 +716,7 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
       </div>
     </div>
 
-    <!-- 19. Alcohol & Intoxicated Guests -->
+    <!-- 18. Alcohol & Intoxicated Guests -->
     <div class="section">
       <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>🚫 18. Alcohol &amp; Intoxicated Guests</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body collapsed">
@@ -743,7 +725,7 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
       </div>
     </div>
 
-    <!-- 20. MC's Right to Refuse or End Services -->
+    <!-- 19. MC's Right to Refuse or End Services -->
     <div class="section">
       <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>🎙️ 19. MC&rsquo;s Right to Refuse or End Services</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body collapsed">
@@ -752,7 +734,7 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
       </div>
     </div>
 
-    <!-- 21. Guest Count & Event Scale -->
+    <!-- 20. Guest Count & Event Scale -->
     <div class="section">
       <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>👥 20. Guest Count &amp; Event Scale</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body collapsed">
@@ -770,7 +752,7 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
       </div>
     </div>
 
-    <!-- 23. Dress Code & Professional Appearance -->
+    <!-- 22. Dress Code & Professional Appearance -->
     <div class="section">
       <div class="section-title collapsed" onclick="toggleSection(this)"><span style="display:flex;align-items:center;flex:1;"><span class="section-dot optional"></span>👔 22. Dress Code &amp; Professional Appearance</span><span class="toggle-icon">&#9660;</span></div>
       <div class="section-body collapsed">
@@ -960,20 +942,25 @@ addHostEvent();
 // ── Generate link ─────────────────────────────────────────────────────────────
 
 // ── Quote calculator ──────────────────────────────────────────────────────────
+function cleanNum(id) {
+  const val = document.getElementById(id)?.value || '0';
+  return parseFloat(val.toString().replace(/[$,\s]/g,'')) || 0;
+}
+
 function calcFees() {
-  const single   = parseFloat(document.getElementById('h_fee_single')?.value) || 0;
-  const addons   = parseFloat(document.getElementById('h_fee_addons')?.value) || 0;
-  const numEv    = parseFloat(document.getElementById('h_fee_num_events')?.value) || 0;
-  const travel   = parseFloat(document.getElementById('h_fee_travel')?.value) || 0;
-  const discount = parseFloat(document.getElementById('h_fee_discount')?.value) || 0;
-  const retainer = parseFloat(document.getElementById('h_fee_retainer')?.value) || 0;
+  const single   = cleanNum('h_fee_single');
+  const addons   = cleanNum('h_fee_addons');
+  const numEv    = cleanNum('h_fee_num_events');
+  const travel   = cleanNum('h_fee_travel');
+  const discount = cleanNum('h_fee_discount');
+  const retainer = cleanNum('h_fee_retainer');
 
   const addonsTotal = addons * numEv;
   const subtotal    = single + addonsTotal + travel;
   const total       = Math.max(0, subtotal - discount);
   const balance     = Math.max(0, total - retainer);
 
-  const fmt = v => '$' + v.toFixed(2);
+  const fmt = v => '$' + v.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
 
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
   set('calc_single',   fmt(single));
@@ -1022,23 +1009,28 @@ function generateLink() {
   const ot = document.getElementById('h_addon_other_text')?.value || '';
   if (ot) p.set('addon_other_text', ot);
 
-  // Fees — use calculator values
-  const fSingle   = document.getElementById('h_fee_single')?.value || '0';
-  const fAddons   = document.getElementById('h_fee_addons')?.value || '0';
-  const fNumEv    = document.getElementById('h_fee_num_events')?.value || '0';
-  const fTravel   = document.getElementById('h_fee_travel')?.value || '0';
-  const fDiscount = document.getElementById('h_fee_discount')?.value || '0';
-  const fRetainer = document.getElementById('h_fee_retainer')?.value || '0';
-  const fTotal    = document.getElementById('h_fee_total')?.value || '0';
-  const fBalance  = document.getElementById('h_fee_balance')?.value || '0';
-  p.set('fee_single',   fSingle   ? `$${parseFloat(fSingle).toFixed(2)}`   : '—');
-  p.set('fee_addons',   fAddons   ? `$${parseFloat(fAddons).toFixed(2)}`   : '—');
-  p.set('fee_num_events', fNumEv || '0');
-  p.set('fee_travel',   fTravel   ? `$${parseFloat(fTravel).toFixed(2)}`   : '—');
-  p.set('fee_discount', fDiscount ? `$${parseFloat(fDiscount).toFixed(2)}` : '0');
-  p.set('fee_retainer', fRetainer ? `$${parseFloat(fRetainer).toFixed(2)}` : '—');
-  p.set('fee_total',    fTotal    ? `$${parseFloat(fTotal).toFixed(2)}`    : '—');
-  p.set('fee_balance',  fBalance  ? `$${parseFloat(fBalance).toFixed(2)}`  : '—');
+  // Fees — strip any $, commas from inputs and format cleanly
+  const parseFee = id => {
+    const v = document.getElementById(id)?.value || '0';
+    return parseFloat(v.toString().replace(/[$,\s]/g,'')) || 0;
+  };
+  const fmtFee = n => n > 0 ? '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—';
+  const fSingle   = parseFee('h_fee_single');
+  const fAddons   = parseFee('h_fee_addons');
+  const fNumEv    = parseFee('h_fee_num_events');
+  const fTravel   = parseFee('h_fee_travel');
+  const fDiscount = parseFee('h_fee_discount');
+  const fRetainer = parseFee('h_fee_retainer');
+  const fTotal    = parseFee('h_fee_total') || (fSingle + (fAddons * fNumEv) + fTravel - fDiscount);
+  const fBalance  = parseFee('h_fee_balance') || Math.max(0, fTotal - fRetainer);
+  p.set('fee_single',    fmtFee(fSingle));
+  p.set('fee_addons',    fmtFee(fAddons));
+  p.set('fee_num_events', fNumEv.toString() || '0');
+  p.set('fee_travel',    fmtFee(fTravel));
+  p.set('fee_discount',  fDiscount > 0 ? '$' + fDiscount.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : '0');
+  p.set('fee_retainer',  fmtFee(fRetainer));
+  p.set('fee_total',     fmtFee(fTotal));
+  p.set('fee_balance',   fmtFee(fBalance));
 
   const url = base + '?' + p.toString();
   document.getElementById('generatedLinkInput').value = url;
@@ -1660,49 +1652,100 @@ window.submitContract = async function() {
     to_email:       document.getElementById('client_email')?.value?.trim() || '',
   };
 
-  // Build Google Calendar link
-  const firstBlock = document.querySelector('.client-event-block');
-  let calDate = '', calEndDate = '', calTitle = '', calDetails = '';
-  if (firstBlock) {
-    const fid = firstBlock.id.replace('cev_','');
-    const evDate  = document.getElementById(`c_edate_${fid}`)?.value || '';
-    const evStart = document.getElementById(`c_start_${fid}`)?.value || '17:00';
-    const evEnd   = document.getElementById(`c_end_${fid}`)?.value || '22:00';
-    const evType  = document.getElementById(`c_etype_${fid}`)?.value || 'Event';
-    const evVenue = document.getElementById(`c_venue_${fid}`)?.value || rawMap['events'] ? JSON.parse(rawMap['events']||'[]')[0]?.venue || '' : '';
-    const evAddr  = document.getElementById(`c_addr_${fid}`)?.value || '';
-    const cName   = rawMap['client_names'] || '—';
-    
-    if (evDate) {
-      const startDT = evDate.replace(/-/g,'') + 'T' + evStart.replace(':','') + '00';
-      const endDT   = evDate.replace(/-/g,'') + 'T' + evEnd.replace(':','') + '00';
-      calDate    = startDT;
-      calEndDate = endDT;
-      calTitle   = encodeURIComponent(`${cName} - ${evType}`);
-      calDetails = encodeURIComponent(
-        `Client: ${cName}\n` +
-        `Phone: ${rawMap['client_phone']||'—'}\n` +
-        `Email: ${rawMap['client_email']||'—'}\n` +
-        `Venue: ${evVenue}${evAddr ? ', ' + evAddr : ''}\n` +
-        `Guests: ${rawMap['events'] ? JSON.parse(rawMap['events']||'[]')[0]?.guests||'—' : '—'}\n` +
-        `---\n` +
-        `Total: ${rawMap['fee_total']||'—'}\n` +
-        `Retainer: ${rawMap['fee_retainer']||'—'}\n` +
-        `Balance: ${rawMap['fee_balance']||'—'}\n` +
-        `Discount: ${rawMap['fee_discount']||'0'}\n` +
-        `---\n` +
-        `Planner: ${document.getElementById('planner_name')?.value||'N/A'}\n` +
-        `Secondary Contact: ${document.getElementById('secondary_contact_name')?.value||'N/A'}`
-      );
-    }
-  }
-  const calLocation = encodeURIComponent(
-    (document.querySelector('[id^="c_addr_"]')?.value || '')
-  );
-  const calLink = calDate 
-    ? `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${calTitle}&dates=${calDate}/${calEndDate}&details=${calDetails}&location=${calLocation}`
-    : '';
-  templateParams.google_cal_link = calLink;
+  // Build Google Calendar links — one per event
+  const cName      = rawMap['client_names'] || '—';
+  const cPhone     = rawMap['client_phone'] || '—';
+  const cEmail     = rawMap['client_email'] || '—';
+  const secContact = document.getElementById('secondary_contact_name')?.value || 'N/A';
+  const plannerNm  = document.getElementById('planner_name')?.value || 'N/A';
+
+  // Strip $ from fee values for clean display
+  const stripDollar = v => v ? v.toString().replace(/[$,]/g,'') : '0';
+  const fmtMoney = v => { const n = parseFloat(stripDollar(v)); return isNaN(n) ? '—' : '$' + n.toFixed(2); };
+  const calFeeTotal    = fmtMoney(rawMap['fee_total']);
+  const calFeeRetainer = fmtMoney(rawMap['fee_retainer']);
+  const calFeeBalance  = fmtMoney(rawMap['fee_balance']);
+  const calFeeDiscount = fmtMoney(rawMap['fee_discount']);
+
+  const calLinks = [];
+  const calLinksList = [];
+
+  document.querySelectorAll('.client-event-block').forEach((block, i) => {
+    const bid    = block.id.replace('cev_','');
+    const evDate = document.getElementById(`c_edate_${bid}`)?.value || '';
+    const evStart = document.getElementById(`c_start_${bid}`)?.value || '17:00';
+    const evEnd   = document.getElementById(`c_end_${bid}`)?.value || '22:00';
+    const evType  = document.getElementById(`c_etype_${bid}`)?.value || 'Event';
+    const evVenue = document.getElementById(`c_venue_${bid}`)?.value || '';
+    const evAddr  = document.getElementById(`c_addr_${bid}`)?.value || '';
+    const evGuests = document.getElementById(`c_guests_${bid}`)?.value ||
+                     (JSON.parse(rawMap['events']||'[]')[i]?.guests || '—');
+
+    if (!evDate) return;
+
+    const startDT = evDate.replace(/-/g,'') + 'T' + evStart.replace(':','') + '00';
+    const endDT   = evDate.replace(/-/g,'') + 'T' + evEnd.replace(':','') + '00';
+
+    const fmtDateStr = d => {
+      if (!d) return '—';
+      const [y,m,day] = d.split('-');
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      return `${months[parseInt(m)-1]} ${parseInt(day)}, ${y}`;
+    };
+    const fmtTimeStr = t => {
+      if (!t) return '—';
+      const [h,mn] = t.split(':');
+      const hr = parseInt(h);
+      return `${hr%12||12}:${mn} ${hr<12?'AM':'PM'}`;
+    };
+
+    const venueStr  = [evVenue, evAddr].filter(Boolean).join(', ');
+    const title     = encodeURIComponent(`${cName} - ${evType}`);
+    const details   = encodeURIComponent(
+      `📋 ${cName.toUpperCase()} — ${evType.toUpperCase()}
+` +
+      `📅 ${fmtDateStr(evDate)} | ${fmtTimeStr(evStart)} – ${fmtTimeStr(evEnd)}
+` +
+      `📍 ${venueStr || '—'}
+` +
+      `👥 ${evGuests} Guests
+
+` +
+      `💰 QUOTE
+` +
+      `Total:    ${calFeeTotal}
+` +
+      `Retainer: ${calFeeRetainer}
+` +
+      `Discount: ${calFeeDiscount}
+` +
+      `Balance:  ${calFeeBalance}
+
+` +
+      `📞 CONTACT
+` +
+      `Phone: ${cPhone}
+` +
+      `Email: ${cEmail}
+` +
+      `Secondary: ${secContact}
+` +
+      `Planner: ${plannerNm}`
+    );
+    const location  = encodeURIComponent(venueStr);
+    const link = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDT}/${endDT}&details=${details}&location=${location}`;
+    calLinks.push(link);
+    calLinksList.push(`${evType}: ${link}`);
+  });
+
+  // Pass first link as main, all links as list
+  templateParams.google_cal_link  = calLinks[0] || '';
+  templateParams.google_cal_links = calLinks.map((l, i) => {
+    const blocks = document.querySelectorAll('.client-event-block');
+    const bid = blocks[i]?.id.replace('cev_','');
+    const evType = document.getElementById(`c_etype_${bid}`)?.value || `Event ${i+1}`;
+    return `<a href="${l}" target="_blank" style="display:block;width:100%;background:#1A1A2E;color:#C9A84C;font-family:Arial,sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:0.08em;text-transform:uppercase;padding:14px 24px;border-radius:8px;text-decoration:none;text-align:center;border:1.5px solid #C9A84C;box-sizing:border-box;margin-bottom:8px;">📅 &nbsp; Add ${evType} to Google Calendar</a>`;
+  }).join('');
 
   try {
     emailjs.init(EMAILJS_PUBLIC_KEY);
