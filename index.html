@@ -1596,8 +1596,8 @@ window.submitContract = async function() {
     client_date:    fmtDate(clientDate),
     mc_date:        fmtDate(new Date().toISOString().split('T')[0]),
     submitted_at:   new Date().toLocaleString('en-US', {timeZone:'America/Chicago'}),
-    fee_discount:   rawMap['fee_discount'] || '0',
-    fee_travel:     rawMap['fee_travel'] || '—',
+    fee_discount:   (parseFloat((rawMap['fee_discount'] || '0').replace('$','')) > 0) ? (rawMap['fee_discount'] || '') : '',
+    fee_travel:     (parseFloat((rawMap['fee_travel'] || '0').replace('$','')) > 0) ? (rawMap['fee_travel'] || '') : '',
     client_email:   document.getElementById('client_email')?.value?.trim() || '—',
     secondary_contact: (document.getElementById('secondary_contact_name')?.value?.trim() || '') + (document.getElementById('secondary_contact_relation')?.value ? ' (' + document.getElementById('secondary_contact_relation').value + ')' : '') + (document.getElementById('secondary_contact_phone')?.value?.trim() ? ' — ' + document.getElementById('secondary_contact_phone').value.trim() : '') || 'None',
     planner_name:   document.getElementById('planner_name')?.value?.trim() || 'None',
@@ -1678,6 +1678,8 @@ window.submitContract = async function() {
   document.getElementById('successScreen').style.display = 'block';
   const sticky = document.getElementById('stickySubmit');
   if (sticky) { sticky.style.display = 'none'; sticky.remove(); }
+  const nextBtn = document.getElementById('floatingNext');
+  if (nextBtn) nextBtn.style.display = 'none';
   const bar = document.getElementById('progressBar');
   if (bar) bar.style.display = 'none';
   const welcome = document.getElementById('welcomeBanner');
