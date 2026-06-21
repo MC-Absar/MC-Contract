@@ -1149,8 +1149,6 @@ function addClientEvent(prefill = {}) {
 
 // ── Load client view ──────────────────────────────────────────────────────────
 function loadClientView(params) {
-  // Lock down — client cannot add or remove events
-  window.addClientEvent = function() { return; };
   const rawSearch2 = window.location.search.slice(1);
   const rawMap = {};
   rawSearch2.split('&').forEach(pair => {
@@ -1210,6 +1208,9 @@ function loadClientView(params) {
   } else {
     addClientEvent({});
   }
+
+  // Lock addClientEvent AFTER events are loaded — client cannot add more
+  window.addClientEvent = function() { return; };
 
   // Welcome banner
   const banner = document.getElementById('welcomeBanner');
