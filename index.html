@@ -1811,6 +1811,21 @@ window.submitContract = async function() {
 
 
 
+
+// ── Activate correct mode ─────────────────────────────────────────────────────
+(function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const isClient = urlParams.get('d') === '1';
+  if (isClient) {
+    document.getElementById('hostPanel').style.display = 'none';
+    document.getElementById('contractView').style.display = 'block';
+    loadClientView(urlParams);
+  } else {
+    document.getElementById('hostPanel').style.display = 'flex';
+    document.getElementById('contractView').style.display = 'none';
+    addHostEvent();
+  }
+})();
 </script>
 </body>
 </html>
