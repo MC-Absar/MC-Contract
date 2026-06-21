@@ -1767,10 +1767,13 @@ window.submitContract = async function() {
     client_date:    fmtDate(clientDate),
     mc_date:        fmtDate(new Date().toISOString().split('T')[0]),
     submitted_at:   new Date().toLocaleString('en-US', {timeZone:'America/Chicago'}),
-    google_cal_link: calLinks[0]?.link || '',
-    google_cal_links: calLinks.map(({link, evType}) =>
-      `<a href="${link}" target="_blank" style="display:block;width:100%;background:#1A1A2E;color:#C9A84C;font-family:Arial,sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:0.08em;text-transform:uppercase;padding:14px 24px;border-radius:8px;text-decoration:none;text-align:center;border:1.5px solid #C9A84C;box-sizing:border-box;margin-bottom:8px;">📅 &nbsp; Add ${evType} to Google Calendar</a>`
-    ).join(''),
+    google_cal_link:   calLinks[0]?.link || '',
+    google_cal_link_1: calLinks[0]?.link || '',
+    google_cal_link_2: calLinks[1]?.link || '',
+    google_cal_link_3: calLinks[2]?.link || '',
+    google_cal_type_1: calLinks[0]?.evType || '',
+    google_cal_type_2: calLinks[1]?.evType || '',
+    google_cal_type_3: calLinks[2]?.evType || '',
   };
 
   try {
