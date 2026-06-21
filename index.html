@@ -1082,16 +1082,15 @@ function addClientEvent(prefill = {}) {
   div.innerHTML = `
     <div class="event-badge">
       ${typeName ? `<span class="event-badge-name">${typeName}</span>` : `Event ${idx}`}
-
     </div>
     <div class="client-field-row two">
       <div class="field-group">
         <label>Event Type</label>
-        <input type="text" id="c_etype_${idx}" placeholder="e.g. Wedding Reception"/>
+        <input type="text" id="c_etype_${idx}" placeholder="e.g. Wedding Reception" ${typeName ? 'class="prefilled" readonly' : ''}/>
       </div>
       <div class="field-group">
-        <label>Event Date <span style="font-size:0.65rem;background:#fdecea;color:#c0392b;border-radius:3px;padding:1px 5px;font-family:Arial,sans-serif;font-weight:700;letter-spacing:0.04em;">REQUIRED</span></label>
-        <input type="date" id="c_edate_${idx}"/>
+        <label>Event Date ${dateVal ? '' : '<span style="font-size:0.65rem;background:#fdecea;color:#c0392b;border-radius:3px;padding:1px 5px;font-family:Arial,sans-serif;font-weight:700;letter-spacing:0.04em;">REQUIRED</span>'}</label>
+        <input type="date" id="c_edate_${idx}" ${dateVal ? 'class="prefilled" readonly' : ''}/>
       </div>
     </div>
     ${venueName ? `
