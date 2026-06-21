@@ -117,8 +117,7 @@ body {
 .field-group input[readonly].prefilled { cursor:default; opacity:0.85; }
 .btn-add-client-event { width:100%; padding:11px; border:1.5px dashed var(--border); background:transparent; border-radius:8px; font-family:'Inter',sans-serif; font-size:0.82rem; font-weight:500; color:var(--muted); cursor:pointer; margin-top:6px; transition:all 0.2s; letter-spacing:0.03em; }
 .btn-add-client-event:hover { border-color:var(--gold); color:var(--gold); background:rgba(201,168,76,0.04); }
-.btn-remove-client-event { background:none; border:none; color:#ccc; font-size:0.82rem; cursor:pointer; margin-left:auto; font-family:'Inter',sans-serif; font-weight:500; padding:2px 6px; border-radius:4px; transition:all 0.2s; }
-.btn-remove-client-event:hover { color:var(--red); background:rgba(220,38,38,0.06); }
+
 
 p.clause { font-size:0.9rem; color:var(--body); margin-bottom:12px; line-height:1.75; font-family:'Inter',sans-serif; }
 ul.clause-list { margin:8px 0 14px 20px; font-size:0.9rem; color:var(--body); font-family:'Inter',sans-serif; }
@@ -376,7 +375,10 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
       </div>
       <p class="host-lock-note">Fees are locked for the client — read only.</p>
 
-      <button class="btn-generate" onclick="generateLink()">Generate Client Link →</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px;">
+        <button class="btn-generate" style="margin-top:0;" onclick="generateLink()">Generate Link →</button>
+        <button class="btn-generate" style="margin-top:0;background:linear-gradient(135deg,#2d2d4e 0%,#1A1A2E 100%);border:1.5px solid var(--gold);" onclick="previewContract()">👁 Preview</button>
+      </div>
       <div class="generated-link-box" id="generatedLinkBox">
         <p>Share this link with your client. It opens the contract pre-filled with your details.</p>
         <div class="link-copy-row">
@@ -515,7 +517,7 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
 
       <div class="sub-heading" style="margin-bottom:12px;">Event Date(s) &amp; Venue Info</div>
       <div id="clientEventList"></div>
-      <button class="btn-add-client-event" onclick="addClientEvent()">+ Add Another Event Date</button>
+      <button class="btn-add-client-event" onclick="addClientEvent()" id="clientAddEventBtn" style="display:none;">+ Add Another Event Date</button>
     </div>
       </div>
     <!-- 2. Scope -->
@@ -979,6 +981,17 @@ function calcFees() {
   if (balanceEl) balanceEl.value = fmt(balance);
 }
 
+function previewContract() {
+  // Build the link first
+  generateLink();
+  const url = document.getElementById('generatedLinkInput')?.value;
+  if (url && url.includes('?')) {
+    window.open(url, '_blank');
+  } else {
+    alert('Please fill in at least the client name and one event before previewing.');
+  }
+}
+
 function generateLink() {
   const base = window.location.href.split('?')[0];
   const p = new URLSearchParams();
@@ -1069,7 +1082,7 @@ function addClientEvent(prefill = {}) {
   div.innerHTML = `
     <div class="event-badge">
       ${typeName ? `<span class="event-badge-name">${typeName}</span>` : `Event ${idx}`}
-      ${clientEventCount > 1 ? `<button class="btn-remove-client-event" onclick="removeClientEvent(${idx})">✕ Remove</button>` : ''}
+
     </div>
     <div class="client-field-row two">
       <div class="field-group">
@@ -1132,16 +1145,14 @@ function addClientEvent(prefill = {}) {
   }
 }
 
-function removeClientEvent(idx) {
-  const el = document.getElementById(`cev_${idx}`);
-  if (el) el.remove();
-}
 
-function loadClientView(p) {
-  // Parse directly from raw URL — most reliable across all browsers
-  const rawSearch = window.location.search.slice(1);
+
+
+// ── Load client view ──────────────────────────────────────────────────────────
+function loadClientView(params) {
+  const rawSearch2 = window.location.search.slice(1);
   const rawMap = {};
-  rawSearch.split('&').forEach(pair => {
+  rawSearch2.split('&').forEach(pair => {
     const eq = pair.indexOf('=');
     if (eq > 0) {
       const k = decodeURIComponent(pair.slice(0, eq));
@@ -1150,7 +1161,7 @@ function loadClientView(p) {
     }
   });
 
-  // Client name / phone
+  // Pre-fill locked client info fields
   const cn = rawMap['client_names'] || '';
   const cp = rawMap['client_phone'] || '';
   const ce = rawMap['client_email'] || '';
@@ -1161,24 +1172,6 @@ function loadClientView(p) {
   if (cp && cpEl) { cpEl.value = cp; cpEl.classList.add('prefilled'); cpEl.readOnly = true; }
   if (ce && ceEl) { ceEl.value = ce; ceEl.classList.add('prefilled'); ceEl.readOnly = true; }
 
-  // Events
-  try {
-    const events = JSON.parse(rawMap['events'] || '[]');
-    if (events.length > 0) {
-      events.forEach(ev => addClientEvent(ev));
-    } else {
-      addClientEvent();
-    }
-  } catch(e) { addClientEvent(); }
-
-  // Add-ons
-  ['addon_reels','addon_baraat','addon_multi','addon_other_check'].forEach(f => {
-    const el = document.getElementById(f);
-    if (el) el.checked = rawMap[f] === '1';
-  });
-  const ot = rawMap['addon_other_text'];
-  if (ot) document.getElementById('addon_other_label').textContent = 'Other: ' + ot;
-
   // Fees — parse and calculate on client side to avoid NaN
   const fSingle   = parseFloat((rawMap['fee_single']   || '0').replace(/[$,]/g,'')) || 0;
   const fAddons   = parseFloat((rawMap['fee_addons']   || '0').replace(/[$,]/g,'')) || 0;
@@ -1187,43 +1180,169 @@ function loadClientView(p) {
   const fRetainer = parseFloat((rawMap['fee_retainer'] || '0').replace(/[$,]/g,'')) || 0;
   const fTotal    = parseFloat((rawMap['fee_total']    || '0').replace(/[$,]/g,'')) || 0;
   const fBalance  = parseFloat((rawMap['fee_balance']  || '0').replace(/[$,]/g,'')) || 0;
-  const fmt = v => v > 0 ? '$' + v.toFixed(2) : '—';
+  const fmt = v => v > 0 ? '$' + v.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—';
 
   const setFee = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
   setFee('d_fee_single',   fmt(fSingle));
   setFee('d_fee_addons',   fmt(fAddons));
   setFee('d_fee_travel',   fmt(fTravel));
   setFee('d_fee_retainer', fmt(fRetainer));
-  setFee('d_fee_balance',  fBalance > 0 ? '$' + fBalance.toFixed(2) : '—');
-  setFee('d_fee_total',    fTotal > 0 ? '$' + fTotal.toFixed(2) : '—');
+  setFee('d_fee_balance',  fBalance > 0 ? '$' + fBalance.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—');
+  setFee('d_fee_total',    fTotal > 0 ? '$' + fTotal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—');
 
-  // Show/hide discount row
   const discRow = document.getElementById('d_discount_row');
   if (discRow) {
     discRow.style.display = fDiscount > 0 ? 'table-row' : 'none';
     const discEl = document.getElementById('d_fee_discount');
-    if (discEl) discEl.textContent = fDiscount > 0 ? '-$' + fDiscount.toFixed(2) : '';
+    if (discEl) discEl.textContent = fDiscount > 0 ? '-$' + fDiscount.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : '';
   }
-
-  // Show/hide travel row
   const travRow = document.getElementById('d_travel_row');
   if (travRow) travRow.style.display = fTravel > 0 ? 'table-row' : 'none';
 
+  // Load events from URL
+  const eventsRaw = rawMap['events'];
+  if (eventsRaw) {
+    try {
+      const events = JSON.parse(eventsRaw);
+      events.forEach(ev => addClientEvent(ev));
+    } catch(e) { addClientEvent({}); }
+  } else {
+    addClientEvent({});
+  }
+
+  // Welcome banner
+  const banner = document.getElementById('welcomeBanner');
+  const nameEl = document.getElementById('welcomeName');
+  if (banner && cn) {
+    if (nameEl) nameEl.textContent = cn.split(' ')[0];
+    banner.style.display = 'block';
+  }
+
   // MC date + auto-fill client signing date to today
   const todayStr = new Date().toISOString().split('T')[0];
-  document.getElementById('mc_date').value = todayStr;
+  const mcDateEl = document.getElementById('mc_date');
+  if (mcDateEl) mcDateEl.value = todayStr;
   const clientDateEl = document.getElementById('client_date');
   if (clientDateEl && !clientDateEl.value) clientDateEl.value = todayStr;
 }
 
-// ── Activate client mode now that all functions are defined ───────────────────
-if (isClientMode) {
-  document.getElementById('hostPanel').style.display = 'none';
-  document.getElementById('contractView').style.display = 'block';
-
-  loadClientView(params);
+// ── Quote calculator ──────────────────────────────────────────────────────────
+function cleanNum(id) {
+  const val = document.getElementById(id)?.value || '0';
+  return parseFloat(val.toString().replace(/[$,\s]/g,'')) || 0;
 }
 
+function calcFees() {
+  const single   = cleanNum('h_fee_single');
+  const addons   = cleanNum('h_fee_addons');
+  const numEv    = cleanNum('h_fee_num_events');
+  const travel   = cleanNum('h_fee_travel');
+  const discount = cleanNum('h_fee_discount');
+  const retainer = cleanNum('h_fee_retainer');
+
+  const addonsTotal = addons * numEv;
+  const subtotal    = single + addonsTotal + travel;
+  const total       = Math.max(0, subtotal - discount);
+  const balance     = Math.max(0, total - retainer);
+
+  const fmt = v => '$' + v.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set('calc_single',   fmt(single));
+  set('calc_addons',   fmt(addonsTotal));
+  set('calc_travel',   fmt(travel));
+  set('calc_subtotal', fmt(subtotal));
+  set('calc_discount_display', '-' + fmt(discount));
+  set('calc_total',    fmt(total));
+
+  const discRow = document.getElementById('discount_row');
+  if (discRow) discRow.style.display = discount > 0 ? 'table-row' : 'none';
+  const travRow = document.getElementById('calc_travel_row');
+  if (travRow) travRow.style.display = travel > 0 ? 'table-row' : 'none';
+
+  const totalEl   = document.getElementById('h_fee_total');
+  const balanceEl = document.getElementById('h_fee_balance');
+  if (totalEl)   totalEl.value   = fmt(total);
+  if (balanceEl) balanceEl.value = fmt(balance);
+}
+
+// ── Generate client link ──────────────────────────────────────────────────────
+function previewContract() {
+  // Build the link first
+  generateLink();
+  const url = document.getElementById('generatedLinkInput')?.value;
+  if (url && url.includes('?')) {
+    window.open(url, '_blank');
+  } else {
+    alert('Please fill in at least the client name and one event before previewing.');
+  }
+}
+
+function generateLink() {
+  const base = window.location.href.split('?')[0];
+  const p = new URLSearchParams();
+  p.set('d', '1');
+
+  const cn = document.getElementById('h_client_names')?.value || '';
+  const cp = document.getElementById('h_client_phone')?.value || '';
+  const ce = document.getElementById('h_client_email')?.value || '';
+  if (cn) p.set('client_names', cn);
+  if (cp) p.set('client_phone', cp);
+  if (ce) p.set('client_email', ce);
+
+  // Collect events with venue + guest count
+  const events = [];
+  document.querySelectorAll('.host-event-block').forEach(block => {
+    const id = block.id.replace('hev_','');
+    const etype  = document.getElementById(`h_etype_${id}`)?.value || '';
+    const edate  = document.getElementById(`h_edate_${id}`)?.value || '';
+    const venue  = document.getElementById(`h_venue_${id}`)?.value || '';
+    const guests = document.getElementById(`h_guests_${id}`)?.value || '';
+    if (etype || edate) events.push({ etype, edate, venue, guests });
+  });
+  p.set('events', JSON.stringify(events));
+
+  ['addon_reels','addon_baraat','addon_multi','addon_other_check'].forEach(f => {
+    p.set(f, document.getElementById('h_'+f)?.checked ? '1' : '0');
+  });
+  const ot = document.getElementById('h_addon_other_text')?.value || '';
+  if (ot) p.set('addon_other_text', ot);
+
+  // Fees — strip any $, commas from inputs and format cleanly
+  const parseFee = id => {
+    const v = document.getElementById(id)?.value || '0';
+    return parseFloat(v.toString().replace(/[$,\s]/g,'')) || 0;
+  };
+  const fmtFee = n => n > 0 ? '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—';
+  const fSingle   = parseFee('h_fee_single');
+  const fAddons   = parseFee('h_fee_addons');
+  const fNumEv    = parseFee('h_fee_num_events');
+  const fTravel   = parseFee('h_fee_travel');
+  const fDiscount = parseFee('h_fee_discount');
+  const fRetainer = parseFee('h_fee_retainer');
+  const fTotal    = parseFee('h_fee_total') || (fSingle + (fAddons * fNumEv) + fTravel - fDiscount);
+  const fBalance  = parseFee('h_fee_balance') || Math.max(0, fTotal - fRetainer);
+  p.set('fee_single',    fmtFee(fSingle));
+  p.set('fee_addons',    fmtFee(fAddons));
+  p.set('fee_num_events', fNumEv.toString() || '0');
+  p.set('fee_travel',    fmtFee(fTravel));
+  p.set('fee_discount',  fDiscount > 0 ? '$' + fDiscount.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : '0');
+  p.set('fee_retainer',  fmtFee(fRetainer));
+  p.set('fee_total',     fmtFee(fTotal));
+  p.set('fee_balance',   fmtFee(fBalance));
+
+  const url = base + '?' + p.toString();
+  document.getElementById('generatedLinkInput').value = url;
+  document.getElementById('generatedLinkBox').style.display = 'block';
+}
+
+function copyLink() {
+  const input = document.getElementById('generatedLinkInput');
+  input.select();
+  document.execCommand('copy');
+  const tip = document.getElementById('copyTip');
+  if (tip) { tip.style.display = 'block'; setTimeout(() => tip.style.display = 'none', 2000); }
+}
 
 // ── Gold particle animation ───────────────────────────────────────────────────
 (function() {
@@ -1287,7 +1406,6 @@ if (isClientMode) {
 
 // ── Section completion checkmarks ─────────────────────────────────────────────
 (function() {
-  // Add check span to each section title via JS
   document.querySelectorAll('.section-title').forEach((title, i) => {
     const chk = document.createElement('span');
     chk.className = 'section-check';
@@ -1325,151 +1443,6 @@ if (isClientMode) {
   document.addEventListener('change', e => checkSection(e.target));
 })();
 
-
-// ── Floating Next Button ──────────────────────────────────────────────────────
-(function() {
-  const btn = document.getElementById('floatingNext');
-  if (!btn) return;
-  btn.style.display = 'block';
-
-  // All required actions in order
-  function getActions() {
-    const actions = [];
-
-    // Client info fields (only if editable)
-    ['client_names','client_phone','client_email'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el && !el.readOnly) actions.push({ el, type:'input' });
-    });
-
-    // Secondary contact
-    ['secondary_contact_name','secondary_contact_relation'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) actions.push({ el, type:'input' });
-    });
-
-    // Per-event required fields
-    document.querySelectorAll('.client-event-block').forEach(block => {
-      const id = block.id.replace('cev_','');
-      ['c_addr_','c_start_','c_end_'].forEach(prefix => {
-        const el = document.getElementById(prefix + id);
-        if (el && !el.readOnly) actions.push({ el, type:'input' });
-      });
-    });
-
-    // Checkboxes
-    ['review_acknowledge','retainer_confirm','read_all_sections'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) actions.push({ el, type:'checkbox' });
-    });
-
-    // Signature fields
-    ['client_sig_name','client_date'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) actions.push({ el, type:'input' });
-    });
-
-    return actions;
-  }
-
-  function isComplete(action) {
-    if (action.type === 'checkbox') return action.el.checked;
-    return action.el.value.trim() !== '';
-  }
-
-  function openParentSection(el) {
-    const section = el.closest('.section, .sig-section');
-    if (!section) return;
-    const title = section.querySelector('.section-title');
-    const body = section.querySelector('.section-body');
-    if (title?.classList.contains('collapsed')) {
-      title.classList.remove('collapsed');
-      body?.classList.remove('collapsed');
-    }
-  }
-
-  window.goToNextAction = function() {
-    const actions = getActions();
-    const incomplete = actions.filter(a => !isComplete(a));
-
-    if (incomplete.length === 0) {
-      // All done — scroll to submit
-      const submit = document.getElementById('submitBtn');
-      if (submit) {
-        submit.scrollIntoView({ behavior:'smooth', block:'center' });
-        btn.textContent = 'Ready to Submit ✓';
-        btn.classList.add('complete');
-      }
-      return;
-    }
-
-    const next = incomplete[0];
-    openParentSection(next.el);
-    next.el.scrollIntoView({ behavior:'smooth', block:'center' });
-    setTimeout(() => next.el.focus(), 400);
-
-    // Update button label
-    const remaining = incomplete.length;
-    if (remaining === 1) {
-      btn.textContent = 'Last Step ›';
-    } else if (remaining <= 3) {
-      btn.textContent = 'Almost done ›';
-    } else {
-      btn.textContent = `Next › (${remaining} left)`;
-    }
-  };
-
-  // Update button label on any input/change
-  document.addEventListener('input', () => {
-    const actions = getActions();
-    const remaining = actions.filter(a => !isComplete(a)).length;
-    if (remaining === 0) {
-      btn.textContent = 'Ready to Submit ✓';
-      btn.classList.add('complete');
-    } else if (remaining <= 1) {
-      btn.textContent = 'Last Step ›';
-      btn.classList.remove('complete');
-    } else if (remaining <= 3) {
-      btn.textContent = 'Almost done ›';
-      btn.classList.remove('complete');
-    } else {
-      btn.textContent = `Next › (${remaining} left)`;
-      btn.classList.remove('complete');
-    }
-  });
-  document.addEventListener('change', () => {
-    const actions = getActions();
-    const remaining = actions.filter(a => !isComplete(a)).length;
-    if (remaining === 0) {
-      btn.textContent = 'Ready to Submit ✓';
-      btn.classList.add('complete');
-    } else if (remaining <= 3) {
-      btn.textContent = 'Almost done ›';
-      btn.classList.remove('complete');
-    } else {
-      btn.textContent = `Next › (${remaining} left)`;
-      btn.classList.remove('complete');
-    }
-  });
-
-  // Hide after submission
-  const origSubmit = window.submitContract;
-  const observer = new MutationObserver(() => {
-    if (document.getElementById('successScreen')?.style.display === 'block') {
-      btn.style.display = 'none';
-    }
-  });
-  const ss = document.getElementById('successScreen');
-  if (ss) observer.observe(ss, { attributes: true, attributeFilter: ['style'] });
-
-  // Initialize label
-  setTimeout(() => {
-    const actions = getActions();
-    const remaining = actions.filter(a => !isComplete(a)).length;
-    btn.textContent = remaining > 0 ? `Start › (${remaining} steps)` : 'Ready to Submit ✓';
-  }, 500);
-})();
-
 // ── Collapsible sections ─────────────────────────────────────────────────────
 function toggleSection(titleEl) {
   titleEl.classList.toggle('collapsed');
@@ -1496,20 +1469,117 @@ function updateProgress() {
 }
 window.addEventListener('scroll', updateProgress, { passive: true });
 
+// ── Floating Next Button ──────────────────────────────────────────────────────
+(function() {
+  const btn = document.getElementById('floatingNext');
+  if (!btn) return;
+  btn.style.display = 'block';
+
+  function getActions() {
+    const actions = [];
+    ['client_names','client_phone','client_email'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && !el.readOnly) actions.push({ el, type:'input' });
+    });
+    ['secondary_contact_name','secondary_contact_relation'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) actions.push({ el, type:'input' });
+    });
+    document.querySelectorAll('.client-event-block').forEach(block => {
+      const id = block.id.replace('cev_','');
+      ['c_addr_','c_start_','c_end_'].forEach(prefix => {
+        const el = document.getElementById(prefix + id);
+        if (el && !el.readOnly) actions.push({ el, type:'input' });
+      });
+    });
+    ['review_acknowledge','retainer_confirm','read_all_sections'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) actions.push({ el, type:'checkbox' });
+    });
+    ['client_sig_name','client_date'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) actions.push({ el, type:'input' });
+    });
+    return actions;
+  }
+
+  function isComplete(action) {
+    if (action.type === 'checkbox') return action.el.checked;
+    return action.el.value.trim() !== '';
+  }
+
+  function openParentSection(el) {
+    const section = el.closest('.section, .sig-section');
+    if (!section) return;
+    const title = section.querySelector('.section-title');
+    const body = section.querySelector('.section-body');
+    if (title?.classList.contains('collapsed')) {
+      title.classList.remove('collapsed');
+      body?.classList.remove('collapsed');
+    }
+  }
+
+  window.goToNextAction = function() {
+    const actions = getActions();
+    const incomplete = actions.filter(a => !isComplete(a));
+    if (incomplete.length === 0) {
+      const submit = document.getElementById('submitBtn');
+      if (submit) {
+        submit.scrollIntoView({ behavior:'smooth', block:'center' });
+        btn.textContent = 'Ready to Submit ✓';
+        btn.classList.add('complete');
+      }
+      return;
+    }
+    const next = incomplete[0];
+    openParentSection(next.el);
+    next.el.scrollIntoView({ behavior:'smooth', block:'center' });
+    setTimeout(() => next.el.focus(), 400);
+    const remaining = incomplete.length;
+    if (remaining === 1) { btn.textContent = 'Last Step ›'; }
+    else if (remaining <= 3) { btn.textContent = 'Almost done ›'; }
+    else { btn.textContent = `Next › (${remaining} left)`; }
+  };
+
+  document.addEventListener('input', () => {
+    const actions = getActions();
+    const remaining = actions.filter(a => !isComplete(a)).length;
+    if (remaining === 0) { btn.textContent = 'Ready to Submit ✓'; btn.classList.add('complete'); }
+    else if (remaining <= 1) { btn.textContent = 'Last Step ›'; btn.classList.remove('complete'); }
+    else if (remaining <= 3) { btn.textContent = 'Almost done ›'; btn.classList.remove('complete'); }
+    else { btn.textContent = `Next › (${remaining} left)`; btn.classList.remove('complete'); }
+  });
+  document.addEventListener('change', () => {
+    const actions = getActions();
+    const remaining = actions.filter(a => !isComplete(a)).length;
+    if (remaining === 0) { btn.textContent = 'Ready to Submit ✓'; btn.classList.add('complete'); }
+    else if (remaining <= 3) { btn.textContent = 'Almost done ›'; btn.classList.remove('complete'); }
+    else { btn.textContent = `Next › (${remaining} left)`; btn.classList.remove('complete'); }
+  });
+  const ss = document.getElementById('successScreen');
+  if (ss) new MutationObserver(() => {
+    if (ss.style.display === 'block') btn.style.display = 'none';
+  }).observe(ss, { attributes: true, attributeFilter: ['style'] });
+
+  setTimeout(() => {
+    const actions = getActions();
+    const remaining = actions.filter(a => !isComplete(a)).length;
+    btn.textContent = remaining > 0 ? `Start › (${remaining} steps)` : 'Ready to Submit ✓';
+  }, 500);
+})();
+
 // ── Submit contract ───────────────────────────────────────────────────────────
 window.submitContract = async function() {
-  // Required client info fields
   // Helper: scroll to error field and highlight it
   function fieldError(el, msg) {
     if (el) {
-      // Open parent section if collapsed
       const section = el.closest('.section, .sig-section');
       if (section) {
         const title = section.querySelector('.section-title');
         const body = section.querySelector('.section-body');
-        if (title && title.classList.contains('collapsed')) {
+        if (title?.classList.contains('collapsed')) {
           title.classList.remove('collapsed');
-          if (body) body.classList.remove('collapsed');
+          body?.classList.remove('collapsed');
         }
       }
       el.style.borderBottomColor = '#c0392b';
@@ -1527,7 +1597,6 @@ window.submitContract = async function() {
   const clientEmailEl = document.getElementById('client_email');
   if (!clientEmailEl?.value?.trim()) { fieldError(clientEmailEl, 'Please enter a client email address in Section 1.'); return; }
 
-  // Check event details — all venue fields required
   const blocks = document.querySelectorAll('.client-event-block');
   for (let i = 0; i < blocks.length; i++) {
     const id = blocks[i].id.replace('cev_','');
@@ -1544,13 +1613,11 @@ window.submitContract = async function() {
     if (!endEl?.value) { fieldError(endEl, `Please enter the estimated end time for Event ${num}.`); return; }
   }
 
-  // Secondary contact
   const secNameEl = document.getElementById('secondary_contact_name');
   if (!secNameEl?.value?.trim()) { fieldError(secNameEl, 'Please enter a day-of secondary contact name in Section 1.'); return; }
   const secRelEl = document.getElementById('secondary_contact_relation');
   if (!secRelEl?.value?.trim()) { fieldError(secRelEl, 'Please select the relationship of your secondary contact in Section 1.'); return; }
 
-  // Required checkboxes
   if (!document.getElementById('review_acknowledge')?.checked) {
     const revEl = document.getElementById('review_acknowledge');
     const revSection = revEl?.closest('.section');
@@ -1573,16 +1640,15 @@ window.submitContract = async function() {
 
   const sigNameEl = document.getElementById('client_sig_name');
   if (!sigNameEl?.value?.trim()) { fieldError(sigNameEl, 'Please type your full legal name to agree to this contract.'); return; }
-  const clientDateEl = document.getElementById('client_date');
-  if (!clientDateEl?.value) { fieldError(clientDateEl, 'Please enter the date in the signature block.'); return; }
+  const clientDateEl2 = document.getElementById('client_date');
+  if (!clientDateEl2?.value) { fieldError(clientDateEl2, 'Please enter the date in the signature block.'); return; }
   const sigName = sigNameEl.value.trim();
-  const clientDate = clientDateEl.value;
+  const clientDate = clientDateEl2.value;
 
   const btn = document.getElementById('submitBtn');
   btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:10px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="animation:spin 0.8s linear infinite;flex-shrink:0;"><circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" stroke-width="3"/><path d="M12 2a10 10 0 0 1 10 10" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>Sending…</span>';
   btn.disabled = true;
 
-  // Fetch client IP for legal record
   let clientIP = 'Not available';
   try {
     const ipRes = await fetch('https://api.ipify.org?format=json');
@@ -1601,7 +1667,6 @@ window.submitContract = async function() {
     }
   });
 
-  // Collect event details
   const eventLines = [];
   document.querySelectorAll('.client-event-block').forEach(block => {
     const id = block.id.replace('cev_','');
@@ -1621,37 +1686,6 @@ window.submitContract = async function() {
   const ot = rawMap['addon_other_text'];
   if (rawMap['addon_other_check']==='1' && ot) addons.push(ot);
 
-  const templateParams = {
-    client_names:   rawMap['client_names'] || document.getElementById('client_names')?.value || '—',
-    client_phone:   rawMap['client_phone'] || document.getElementById('client_phone')?.value || '—',
-    events_summary: eventLines.join('\n\n'),
-    addons:         addons.length ? addons.join(', ') : 'None',
-    fee_single:     rawMap['fee_single'] || '—',
-    fee_addons:     rawMap['fee_addons'] || '—',
-    fee_retainer:   rawMap['fee_retainer'] || '—',
-    fee_balance:    rawMap['fee_balance'] || '—',
-    fee_total:      rawMap['fee_total'] || '—',
-    vendor_tags:    document.getElementById('permit_vendor_tags')?.checked ? 'Yes' : 'No',
-    media_release:  'Agreed',
-    client_sig:     sigName,
-    client_date:    fmtDate(clientDate),
-    mc_date:        fmtDate(new Date().toISOString().split('T')[0]),
-    submitted_at:   new Date().toLocaleString('en-US', {timeZone:'America/Chicago'}),
-    fee_discount:   rawMap['fee_discount'] || '0',
-    fee_discount_label: (parseFloat((rawMap['fee_discount'] || '0').replace(/[$,]/g,'')) > 0) ? 'Discount Applied 🎉' : '',
-    fee_discount_display: (parseFloat((rawMap['fee_discount'] || '0').replace(/[$,]/g,'')) > 0) ? '-' + (rawMap['fee_discount'] || '') : '',
-    fee_travel:     rawMap['fee_travel'] || '—',
-    fee_travel_display: (parseFloat((rawMap['fee_travel'] || '0').replace(/[$,]/g,'')) > 0) ? (rawMap['fee_travel'] || '—') : 'N/A',
-    client_email:   document.getElementById('client_email')?.value?.trim() || '—',
-    secondary_contact: (document.getElementById('secondary_contact_name')?.value?.trim() || '') + (document.getElementById('secondary_contact_relation')?.value ? ' (' + document.getElementById('secondary_contact_relation').value + ')' : '') + (document.getElementById('secondary_contact_phone')?.value?.trim() ? ' — ' + document.getElementById('secondary_contact_phone').value.trim() : '') || 'None',
-    planner_name:   document.getElementById('planner_name')?.value?.trim() || 'None',
-    planner_company: document.getElementById('planner_company')?.value?.trim() || '',
-    planner_contact: document.getElementById('planner_contact')?.value?.trim() || '',
-    contract_version: 'v2.0',
-    client_ip:      clientIP || 'Not available',
-    to_email:       document.getElementById('client_email')?.value?.trim() || '',
-  };
-
   // Build Google Calendar links — one per event
   const cName      = rawMap['client_names'] || '—';
   const cPhone     = rawMap['client_phone'] || '—';
@@ -1659,17 +1693,14 @@ window.submitContract = async function() {
   const secContact = document.getElementById('secondary_contact_name')?.value || 'N/A';
   const plannerNm  = document.getElementById('planner_name')?.value || 'N/A';
 
-  // Strip $ from fee values for clean display
   const stripDollar = v => v ? v.toString().replace(/[$,]/g,'') : '0';
-  const fmtMoney = v => { const n = parseFloat(stripDollar(v)); return isNaN(n) ? '—' : '$' + n.toFixed(2); };
+  const fmtMoney = v => { const n = parseFloat(stripDollar(v)); return isNaN(n) ? '—' : '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); };
   const calFeeTotal    = fmtMoney(rawMap['fee_total']);
   const calFeeRetainer = fmtMoney(rawMap['fee_retainer']);
   const calFeeBalance  = fmtMoney(rawMap['fee_balance']);
   const calFeeDiscount = fmtMoney(rawMap['fee_discount']);
 
   const calLinks = [];
-  const calLinksList = [];
-
   document.querySelectorAll('.client-event-block').forEach((block, i) => {
     const bid    = block.id.replace('cev_','');
     const evDate = document.getElementById(`c_edate_${bid}`)?.value || '';
@@ -1678,83 +1709,75 @@ window.submitContract = async function() {
     const evType  = document.getElementById(`c_etype_${bid}`)?.value || 'Event';
     const evVenue = document.getElementById(`c_venue_${bid}`)?.value || '';
     const evAddr  = document.getElementById(`c_addr_${bid}`)?.value || '';
-    const evGuests = document.getElementById(`c_guests_${bid}`)?.value ||
-                     (JSON.parse(rawMap['events']||'[]')[i]?.guests || '—');
-
+    const evGuests = document.getElementById(`c_guests_${bid}`)?.value || (JSON.parse(rawMap['events']||'[]')[i]?.guests || '—');
     if (!evDate) return;
-
     const startDT = evDate.replace(/-/g,'') + 'T' + evStart.replace(':','') + '00';
     const endDT   = evDate.replace(/-/g,'') + 'T' + evEnd.replace(':','') + '00';
-
-    const fmtDateStr = d => {
-      if (!d) return '—';
-      const [y,m,day] = d.split('-');
-      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      return `${months[parseInt(m)-1]} ${parseInt(day)}, ${y}`;
-    };
-    const fmtTimeStr = t => {
-      if (!t) return '—';
-      const [h,mn] = t.split(':');
-      const hr = parseInt(h);
-      return `${hr%12||12}:${mn} ${hr<12?'AM':'PM'}`;
-    };
-
+    const fmtDateStr = d => { if (!d) return '—'; const [y,m,day] = d.split('-'); const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return `${months[parseInt(m)-1]} ${parseInt(day)}, ${y}`; };
+    const fmtTimeStr = t => { if (!t) return '—'; const [h,mn] = t.split(':'); const hr = parseInt(h); return `${hr%12||12}:${mn} ${hr<12?'AM':'PM'}`; };
     const venueStr  = [evVenue, evAddr].filter(Boolean).join(', ');
     const title     = encodeURIComponent(`${cName} - ${evType}`);
     const details   = encodeURIComponent(
-      `📋 ${cName.toUpperCase()} — ${evType.toUpperCase()}
-` +
-      `📅 ${fmtDateStr(evDate)} | ${fmtTimeStr(evStart)} – ${fmtTimeStr(evEnd)}
-` +
-      `📍 ${venueStr || '—'}
-` +
-      `👥 ${evGuests} Guests
-
-` +
-      `💰 QUOTE
-` +
-      `Total:    ${calFeeTotal}
-` +
-      `Retainer: ${calFeeRetainer}
-` +
-      `Discount: ${calFeeDiscount}
-` +
-      `Balance:  ${calFeeBalance}
-
-` +
-      `📞 CONTACT
-` +
-      `Phone: ${cPhone}
-` +
-      `Email: ${cEmail}
-` +
-      `Secondary: ${secContact}
-` +
+      `📋 ${cName.toUpperCase()} — ${evType.toUpperCase()}\n` +
+      `📅 ${fmtDateStr(evDate)} | ${fmtTimeStr(evStart)} – ${fmtTimeStr(evEnd)}\n` +
+      `📍 ${venueStr || '—'}\n` +
+      `👥 ${evGuests} Guests\n\n` +
+      `💰 QUOTE\n` +
+      `Total:    ${calFeeTotal}\n` +
+      `Retainer: ${calFeeRetainer}\n` +
+      `Discount: ${calFeeDiscount}\n` +
+      `Balance:  ${calFeeBalance}\n\n` +
+      `📞 CONTACT\n` +
+      `Phone: ${cPhone}\n` +
+      `Email: ${cEmail}\n` +
+      `Secondary: ${secContact}\n` +
       `Planner: ${plannerNm}`
     );
     const location  = encodeURIComponent(venueStr);
     const link = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDT}/${endDT}&details=${details}&location=${location}`;
-    calLinks.push(link);
-    calLinksList.push(`${evType}: ${link}`);
+    calLinks.push({ link, evType });
   });
 
-  // Pass first link as main, all links as list
-  templateParams.google_cal_link  = calLinks[0] || '';
-  templateParams.google_cal_links = calLinks.map((l, i) => {
-    const blocks = document.querySelectorAll('.client-event-block');
-    const bid = blocks[i]?.id.replace('cev_','');
-    const evType = document.getElementById(`c_etype_${bid}`)?.value || `Event ${i+1}`;
-    return `<a href="${l}" target="_blank" style="display:block;width:100%;background:#1A1A2E;color:#C9A84C;font-family:Arial,sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:0.08em;text-transform:uppercase;padding:14px 24px;border-radius:8px;text-decoration:none;text-align:center;border:1.5px solid #C9A84C;box-sizing:border-box;margin-bottom:8px;">📅 &nbsp; Add ${evType} to Google Calendar</a>`;
-  }).join('');
+  const templateParams = {
+    client_names:   rawMap['client_names'] || document.getElementById('client_names')?.value || '—',
+    client_phone:   rawMap['client_phone'] || document.getElementById('client_phone')?.value || '—',
+    client_email:   rawMap['client_email'] || document.getElementById('client_email')?.value || '—',
+    events_summary: eventLines.join('\n\n'),
+    addons:         addons.length ? addons.join(', ') : 'None',
+    fee_single:     rawMap['fee_single'] || '—',
+    fee_addons:     rawMap['fee_addons'] || '—',
+    fee_retainer:   rawMap['fee_retainer'] || '—',
+    fee_balance:    rawMap['fee_balance'] || '—',
+    fee_total:      rawMap['fee_total'] || '—',
+    fee_discount:   rawMap['fee_discount'] || '0',
+    fee_discount_label: (parseFloat(stripDollar(rawMap['fee_discount'])) > 0) ? 'Discount Applied 🎉' : '',
+    fee_discount_display: (parseFloat(stripDollar(rawMap['fee_discount'])) > 0) ? '-' + (rawMap['fee_discount'] || '') : '',
+    fee_travel:     rawMap['fee_travel'] || '—',
+    fee_travel_display: (parseFloat(stripDollar(rawMap['fee_travel'])) > 0) ? (rawMap['fee_travel'] || '—') : 'N/A',
+    vendor_tags:    document.getElementById('permit_vendor_tags')?.checked ? 'Yes' : 'No',
+    secondary_contact: (document.getElementById('secondary_contact_name')?.value?.trim() || '') + (document.getElementById('secondary_contact_relation')?.value ? ' (' + document.getElementById('secondary_contact_relation').value + ')' : '') + (document.getElementById('secondary_contact_phone')?.value?.trim() ? ' — ' + document.getElementById('secondary_contact_phone').value.trim() : '') || 'None',
+    planner_name:   document.getElementById('planner_name')?.value?.trim() || 'None',
+    planner_company: document.getElementById('planner_company')?.value?.trim() || '',
+    planner_contact: document.getElementById('planner_contact')?.value?.trim() || '',
+    contract_version: 'v2.0',
+    client_ip:      clientIP || 'Not available',
+    to_email:       document.getElementById('client_email')?.value?.trim() || '',
+    client_sig:     sigName,
+    client_date:    fmtDate(clientDate),
+    mc_date:        fmtDate(new Date().toISOString().split('T')[0]),
+    submitted_at:   new Date().toLocaleString('en-US', {timeZone:'America/Chicago'}),
+    google_cal_link: calLinks[0]?.link || '',
+    google_cal_links: calLinks.map(({link, evType}) =>
+      `<a href="${link}" target="_blank" style="display:block;width:100%;background:#1A1A2E;color:#C9A84C;font-family:Arial,sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:0.08em;text-transform:uppercase;padding:14px 24px;border-radius:8px;text-decoration:none;text-align:center;border:1.5px solid #C9A84C;box-sizing:border-box;margin-bottom:8px;">📅 &nbsp; Add ${evType} to Google Calendar</a>`
+    ).join(''),
+  };
 
   try {
     emailjs.init(EMAILJS_PUBLIC_KEY);
-    // Send to Absar
     await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
       ...templateParams,
       to_email: 'najam.absar@gmail.com',
     });
-    // Send one copy to client
     const clientEmail = document.getElementById('client_email')?.value?.trim();
     if (clientEmail && clientEmail !== 'najam.absar@gmail.com') {
       await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
@@ -1779,12 +1802,14 @@ window.submitContract = async function() {
   if (bar) bar.style.display = 'none';
   const welcome = document.getElementById('welcomeBanner');
   if (welcome) welcome.style.display = 'none';
-  // Disable submit permanently to prevent resubmission
-  const submitBtn = document.getElementById('submitBtn');
-  if (submitBtn) { submitBtn.disabled = true; submitBtn.onclick = null; }
+  const submitBtnEl = document.getElementById('submitBtn');
+  if (submitBtnEl) { submitBtnEl.disabled = true; submitBtnEl.onclick = null; }
   window.submitContract = function() { return; };
   window.scrollTo({top:0, behavior:'smooth'});
 };
+
+
+
 </script>
 </body>
 </html>
