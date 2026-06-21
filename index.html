@@ -517,7 +517,7 @@ ul.clause-list li { margin-bottom:7px; line-height:1.65; }
 
       <div class="sub-heading" style="margin-bottom:12px;">Event Date(s) &amp; Venue Info</div>
       <div id="clientEventList"></div>
-      <button class="btn-add-client-event" onclick="addClientEvent()" id="clientAddEventBtn" style="display:none;">+ Add Another Event Date</button>
+      <button class="btn-add-client-event" id="clientAddEventBtn" style="display:none;pointer-events:none;" disabled>+ Add Another Event Date</button>
     </div>
       </div>
     <!-- 2. Scope -->
@@ -1150,6 +1150,8 @@ function addClientEvent(prefill = {}) {
 
 // ── Load client view ──────────────────────────────────────────────────────────
 function loadClientView(params) {
+  // Lock down — client cannot add or remove events
+  window.addClientEvent = function() { return; };
   const rawSearch2 = window.location.search.slice(1);
   const rawMap = {};
   rawSearch2.split('&').forEach(pair => {
